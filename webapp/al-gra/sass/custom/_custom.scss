@@ -1,0 +1,96 @@
+body {
+  font-family: 'Open Sans', 'Anonymous Pro', 'Source Code Pro';
+  font-size: 12px;
+  background-color: $color-background;
+  width: 400px;
+}
+.header-bar {
+  font-size: 12px;
+  width: 400px;
+  min-height: 30px;
+  max-height: 80px;
+  letter-spacing: 0px;
+  border-bottom: 1px solid #eee;
+  
+  .header-bar-base {
+    position: fixed;
+    opacity: 1;
+    z-index: 10;
+    height: 30px;
+    background-color: white;
+
+    .header-bar-logo {
+      font-size: 18px;
+      margin: 5px 5px;
+      float: left;
+    }
+    .advanced-btn {
+      border: none;
+      padding: 5px 10px;
+      position: absolute;
+      background: #fff;
+      letter-spacing: 2px;
+      &:hover {
+        padding: 5px 10px;
+        -webkit-box-shadow: 0 2px 4px #d6d6d6;
+        border: 1px solid #d6d6d6;
+        box-shadow: 0 2px 4px #d6d6d6;
+        color: #333;
+      }
+      &:active {
+        background: #d6d6d6;
+      }
+    }
+    .advanced-btn-active {
+        background-color: #d6d6d6;
+    }
+  }
+  .header-bar-more {
+    opacity: 1;
+    z-index: 10;
+    clear: both;
+    height: 30px;
+    position: absolute;
+    top: 35px;
+    font-size: 14px;
+    .more-label {
+      padding: 2px 5px;
+      letter-spacing: 0px;
+    }
+  }
+}
+.game-zone {
+  width: 400px;
+  height: 600px;
+  .game-tool-zone {
+    width: 400px;
+    height: 200px;
+  }
+  .playing-area {
+    width: 400px;
+    height: 400px;
+  }
+}
+.animate-hide {
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+  opacity:1;
+  background:white;
+}
+
+.animate-hide.ng-hide-add,
+.animate-hide.ng-hide-remove {
+  display:block!important;
+}
+
+.animate-hide.ng-hide {
+  line-height:0;
+  opacity:0;
+  padding:0 10px;
+}
+
+.check-element {
+  padding:10px;
+  border:1px solid black;
+  background:white;
+}

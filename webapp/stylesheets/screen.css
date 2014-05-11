@@ -1,0 +1,282 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+/* line 17, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../Environment/Ruby193/lib/ruby/gems/1.9.1/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 3, ../al-gra/sass/base/_layout.scss */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* line 7, ../al-gra/sass/base/_layout.scss */
+body {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  background: #eeeeee;
+  color: #666666;
+}
+@media screen and (max-width: 1040px) {
+  /* line 7, ../al-gra/sass/base/_layout.scss */
+  body {
+    margin: 0 20px;
+  }
+}
+@media screen and (max-width: 600px) {
+  /* line 7, ../al-gra/sass/base/_layout.scss */
+  body {
+    font-size: 13px;
+  }
+}
+
+/* line 20, ../al-gra/sass/base/_layout.scss */
+h1 {
+  font-size: 1.8em;
+}
+
+/* line 23, ../al-gra/sass/base/_layout.scss */
+h2 {
+  font-size: 1.5em;
+}
+
+/* line 26, ../al-gra/sass/base/_layout.scss */
+h3 {
+  font-size: 1.3em;
+}
+
+/* line 29, ../al-gra/sass/base/_layout.scss */
+a {
+  text-decoration: none;
+  outline-width: 0;
+  color: #258fb8;
+}
+
+/* line 34, ../al-gra/sass/base/_layout.scss */
+.alignleft {
+  float: left;
+}
+
+/* line 37, ../al-gra/sass/base/_layout.scss */
+.alignright {
+  float: right;
+}
+
+/* line 40, ../al-gra/sass/base/_layout.scss */
+.inner {
+  width: 1000px;
+  margin: 0 auto;
+}
+@media screen and (max-width: 1040px) {
+  /* line 40, ../al-gra/sass/base/_layout.scss */
+  .inner {
+    width: 100%;
+  }
+}
+
+/* line 2, ../al-gra/sass/base/_typography.scss */
+.pullquote-right:before,
+.pullquote-left:before {
+  /* Reset metrics. */
+  padding: 0;
+  border: none;
+  /* Content */
+  content: attr(data-pullquote);
+  /* Pull out to the right, modular scale based margins. */
+  float: right;
+  width: 45%;
+  margin: .5em 0 1em 1.5em;
+  /* Baseline correction */
+  position: relative;
+  top: 7px;
+  font-size: 1.4em;
+  line-height: 1.45em;
+}
+
+/* line 22, ../al-gra/sass/base/_typography.scss */
+.pullquote-left:before {
+  /* Make left pullquotes align properly. */
+  float: left;
+  margin: .5em 1.5em 1em 0;
+}
+
+/* line 1, ../al-gra/sass/custom/_custom.scss */
+body {
+  font-family: 'Open Sans', 'Anonymous Pro', 'Source Code Pro';
+  font-size: 12px;
+  background-color: white;
+  width: 400px;
+}
+
+/* line 7, ../al-gra/sass/custom/_custom.scss */
+.header-bar {
+  font-size: 12px;
+  width: 400px;
+  min-height: 30px;
+  max-height: 80px;
+  letter-spacing: 0px;
+  border-bottom: 1px solid #eee;
+}
+/* line 15, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-base {
+  position: fixed;
+  opacity: 1;
+  z-index: 10;
+  height: 30px;
+  background-color: white;
+}
+/* line 22, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-base .header-bar-logo {
+  font-size: 18px;
+  margin: 5px 5px;
+  float: left;
+}
+/* line 27, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-base .advanced-btn {
+  border: none;
+  padding: 5px 10px;
+  position: absolute;
+  background: #fff;
+  letter-spacing: 2px;
+}
+/* line 33, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-base .advanced-btn:hover {
+  padding: 5px 10px;
+  -webkit-box-shadow: 0 2px 4px #d6d6d6;
+  border: 1px solid #d6d6d6;
+  box-shadow: 0 2px 4px #d6d6d6;
+  color: #333;
+}
+/* line 40, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-base .advanced-btn:active {
+  background: #d6d6d6;
+}
+/* line 44, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-base .advanced-btn-active {
+  background-color: #d6d6d6;
+}
+/* line 48, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-more {
+  opacity: 1;
+  z-index: 10;
+  clear: both;
+  height: 30px;
+  position: absolute;
+  top: 35px;
+  font-size: 14px;
+}
+/* line 56, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-more .more-label {
+  padding: 2px 5px;
+  letter-spacing: 0px;
+}
+
+/* line 62, ../al-gra/sass/custom/_custom.scss */
+.game-zone {
+  width: 400px;
+  height: 600px;
+}
+/* line 65, ../al-gra/sass/custom/_custom.scss */
+.game-zone .game-tool-zone {
+  width: 400px;
+  height: 200px;
+}
+/* line 69, ../al-gra/sass/custom/_custom.scss */
+.game-zone .playing-area {
+  width: 400px;
+  height: 400px;
+}
+
+/* line 74, ../al-gra/sass/custom/_custom.scss */
+.animate-hide {
+  -webkit-transition: all linear 0.5s;
+  transition: all linear 0.5s;
+  opacity: 1;
+  background: white;
+}
+
+/* line 82, ../al-gra/sass/custom/_custom.scss */
+.animate-hide.ng-hide-add,
+.animate-hide.ng-hide-remove {
+  display: block !important;
+}
+
+/* line 86, ../al-gra/sass/custom/_custom.scss */
+.animate-hide.ng-hide {
+  line-height: 0;
+  opacity: 0;
+  padding: 0 10px;
+}
+
+/* line 92, ../al-gra/sass/custom/_custom.scss */
+.check-element {
+  padding: 10px;
+  border: 1px solid black;
+  background: white;
+}
+
+/* import typography */

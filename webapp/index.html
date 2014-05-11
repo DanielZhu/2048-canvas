@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html ng-app="game2048">
+<head>
+  <meta charset="utf-8">
+  <title>Xiaodan's Everything</title>
+  <meta name="author" content="Mengdan Zhu  (Daniel Zhu)">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="/favicon.png" rel="shortcut icon">
+  <link href="stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+
+  <!-- Third party libraries -->
+  <script src="./libs/jquery/jquery-2.0.3.js"></script>
+  <script src="./libs/ba-debug.js"></script>
+  <script src="./libs/angular.min.js"></script>
+  <script src="./libs/timer.js"></script>
+
+  <script src="main.js"></script>
+</head>
+<body>
+  <div ng-controller="AppController">
+    <div class="header-bar">
+      <div class="header-bar-base">
+        <div class="header-bar-logo">Game 2048 by Dan</div>
+        <div><button href="" ng-click="addCard()">Add Card</button></div>
+        <!-- <div style="float:right;" ng-mouseup="checked = !checked" ng-init="checked=false"><a class="advanced-btn">Advanced</a></div> -->
+      </div>
+      <div class="header-bar-more animate-hide" ng-show="checked">
+        <div>
+        </div>
+      </div>
+    </div>
+    <div class="game-zone">
+      <div class="game-tool-zone">
+        <div class="score">{{game.score}}</div>
+      </div>
+      <div class="playing-area">
+        <canvas id="gameGrid" width="400" height="400" ng-mousedown="" ng-mouseup="" style="margin: 10px 0px;">Your browser does not support the HTML5 canvas tag.</canvas>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
