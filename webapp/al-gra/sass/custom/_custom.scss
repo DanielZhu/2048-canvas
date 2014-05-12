@@ -4,6 +4,7 @@ body {
   background-color: $color-background;
   width: 400px;
 }
+.container:focus {outline: 0;}
 .header-bar {
   font-size: 12px;
   width: 400px;
@@ -65,6 +66,19 @@ body {
   .game-tool-zone {
     width: 400px;
     height: 200px;
+    .score-background {
+      float: left;
+      font-size: 30px;
+      text-align: center;
+      vertical-align: middle;
+      margin: 20px 0px 0px 20px;
+      width: 150px;
+      height: 100px;
+      background-color: #FDF5E6;
+      .score {
+        margin: 20px;        
+      }
+    }
   }
   .playing-area {
     width: 400px;

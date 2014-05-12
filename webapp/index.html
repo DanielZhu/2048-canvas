@@ -16,13 +16,11 @@
 
   <script src="main.js"></script>
 </head>
-<body>
-  <div ng-controller="AppController">
+<body ng-controller="AppController">
+  <div class="container" ng-keyup="moveStepPre()" tabindex="1">
     <div class="header-bar">
       <div class="header-bar-base">
-        <div class="header-bar-logo">Game 2048 by Dan</div>
-        <div><button href="" ng-click="addCard()">Add Card</button></div>
-        <!-- <div style="float:right;" ng-mouseup="checked = !checked" ng-init="checked=false"><a class="advanced-btn">Advanced</a></div> -->
+        <div class="header-bar-logo">Game 2048 by Dan<button href="" ng-click="addCard()">Add Card</button></div>
       </div>
       <div class="header-bar-more animate-hide" ng-show="checked">
         <div>
@@ -31,10 +29,11 @@
     </div>
     <div class="game-zone">
       <div class="game-tool-zone">
-        <div class="score">{{game.score}}</div>
+        <div class="score-background"><span class="score">{{score}}</span></div>
+        <div class="score-background"><span class="score">{{totalSteps}} <br>steps</span></div>
       </div>
-      <div class="playing-area">
-        <canvas id="gameGrid" width="400" height="400" ng-mousedown="" ng-mouseup="" style="margin: 10px 0px;">Your browser does not support the HTML5 canvas tag.</canvas>
+      <div class="playing-area" ng-mousedown="mouseDownHandle($event)" ng-mouseup="mouseUpHandle($event)">
+        <canvas id="gameGrid" width="400" height="400" style="margin: 10px 0px;">Your browser does not support the HTML5 canvas tag.</canvas>
       </div>
     </div>
   </div>

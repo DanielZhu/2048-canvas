@@ -173,6 +173,11 @@ body {
 }
 
 /* line 7, ../al-gra/sass/custom/_custom.scss */
+.container:focus {
+  outline: 0;
+}
+
+/* line 8, ../al-gra/sass/custom/_custom.scss */
 .header-bar {
   font-size: 12px;
   width: 400px;
@@ -181,7 +186,7 @@ body {
   letter-spacing: 0px;
   border-bottom: 1px solid #eee;
 }
-/* line 15, ../al-gra/sass/custom/_custom.scss */
+/* line 16, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base {
   position: fixed;
   opacity: 1;
@@ -189,13 +194,13 @@ body {
   height: 30px;
   background-color: white;
 }
-/* line 22, ../al-gra/sass/custom/_custom.scss */
+/* line 23, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base .header-bar-logo {
   font-size: 18px;
   margin: 5px 5px;
   float: left;
 }
-/* line 27, ../al-gra/sass/custom/_custom.scss */
+/* line 28, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base .advanced-btn {
   border: none;
   padding: 5px 10px;
@@ -203,7 +208,7 @@ body {
   background: #fff;
   letter-spacing: 2px;
 }
-/* line 33, ../al-gra/sass/custom/_custom.scss */
+/* line 34, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base .advanced-btn:hover {
   padding: 5px 10px;
   -webkit-box-shadow: 0 2px 4px #d6d6d6;
@@ -211,15 +216,15 @@ body {
   box-shadow: 0 2px 4px #d6d6d6;
   color: #333;
 }
-/* line 40, ../al-gra/sass/custom/_custom.scss */
+/* line 41, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base .advanced-btn:active {
   background: #d6d6d6;
 }
-/* line 44, ../al-gra/sass/custom/_custom.scss */
+/* line 45, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base .advanced-btn-active {
   background-color: #d6d6d6;
 }
-/* line 48, ../al-gra/sass/custom/_custom.scss */
+/* line 49, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-more {
   opacity: 1;
   z-index: 10;
@@ -229,29 +234,44 @@ body {
   top: 35px;
   font-size: 14px;
 }
-/* line 56, ../al-gra/sass/custom/_custom.scss */
+/* line 57, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-more .more-label {
   padding: 2px 5px;
   letter-spacing: 0px;
 }
 
-/* line 62, ../al-gra/sass/custom/_custom.scss */
+/* line 63, ../al-gra/sass/custom/_custom.scss */
 .game-zone {
   width: 400px;
   height: 600px;
 }
-/* line 65, ../al-gra/sass/custom/_custom.scss */
+/* line 66, ../al-gra/sass/custom/_custom.scss */
 .game-zone .game-tool-zone {
   width: 400px;
   height: 200px;
 }
 /* line 69, ../al-gra/sass/custom/_custom.scss */
+.game-zone .game-tool-zone .score-background {
+  float: left;
+  font-size: 30px;
+  text-align: center;
+  vertical-align: middle;
+  margin: 20px 0px 0px 20px;
+  width: 150px;
+  height: 100px;
+  background-color: #FDF5E6;
+}
+/* line 78, ../al-gra/sass/custom/_custom.scss */
+.game-zone .game-tool-zone .score-background .score {
+  margin: 20px;
+}
+/* line 83, ../al-gra/sass/custom/_custom.scss */
 .game-zone .playing-area {
   width: 400px;
   height: 400px;
 }
 
-/* line 74, ../al-gra/sass/custom/_custom.scss */
+/* line 88, ../al-gra/sass/custom/_custom.scss */
 .animate-hide {
   -webkit-transition: all linear 0.5s;
   transition: all linear 0.5s;
@@ -259,20 +279,20 @@ body {
   background: white;
 }
 
-/* line 82, ../al-gra/sass/custom/_custom.scss */
+/* line 96, ../al-gra/sass/custom/_custom.scss */
 .animate-hide.ng-hide-add,
 .animate-hide.ng-hide-remove {
   display: block !important;
 }
 
-/* line 86, ../al-gra/sass/custom/_custom.scss */
+/* line 100, ../al-gra/sass/custom/_custom.scss */
 .animate-hide.ng-hide {
   line-height: 0;
   opacity: 0;
   padding: 0 10px;
 }
 
-/* line 92, ../al-gra/sass/custom/_custom.scss */
+/* line 106, ../al-gra/sass/custom/_custom.scss */
 .check-element {
   padding: 10px;
   border: 1px solid black;
