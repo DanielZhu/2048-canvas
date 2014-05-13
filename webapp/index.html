@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>Xiaodan's Everything</title>
   <meta name="author" content="Mengdan Zhu  (Daniel Zhu)">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
   <link href="/favicon.png" rel="shortcut icon">
   <link href="stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
 
@@ -17,10 +17,10 @@
   <script src="main.js"></script>
 </head>
 <body ng-controller="AppController">
-  <div class="container" ng-keyup="moveStepPre()" tabindex="1">
+  <div class="container">
     <div class="header-bar">
       <div class="header-bar-base">
-        <div class="header-bar-logo">Game 2048 by Dan<button href="" ng-click="addCard()">Add Card</button></div>
+        <div class="header-bar-logo">Game 2048 by Dan(enterzhu@gmail.com)<!-- <button href="" ng-click="addCard()">Add Card</button> --></div>
       </div>
       <div class="header-bar-more animate-hide" ng-show="checked">
         <div>
@@ -29,12 +29,18 @@
     </div>
     <div class="game-zone">
       <div class="game-tool-zone">
-        <div class="score-background"><span class="score">{{score}}</span></div>
-        <div class="score-background"><span class="score">{{totalSteps}} <br>steps</span></div>
+        <div class="score-background">Score<br><span class="score">{{score}}</span></div>
+        <div class="score-background">Steps<br><span class="score">{{totalSteps}}</span></div>
       </div>
-      <div class="playing-area" ng-mousedown="mouseDownHandle($event)" ng-mouseup="mouseUpHandle($event)">
-        <canvas id="gameGrid" width="400" height="400" style="margin: 10px 0px;">Your browser does not support the HTML5 canvas tag.</canvas>
+      <div class="playing-area" ng-keyup="moveStepPre()" tabindex="1" ng-mousedown="mouseDownHandle($event)" ng-mouseup="mouseUpHandle($event)">
+        <canvas id="gameGrid" width="350" height="350" style="">Your browser does not support the HTML5 canvas tag.</canvas>
       </div>
+    </div>
+    <div class="wheel">
+      <button href="" class="wheel-button" ng-click="moveStep(37)">Left</button>&nbsp;&nbsp;
+      <button href="" class="wheel-button" ng-click="moveStep(39)">Right</button>&nbsp;&nbsp;
+      <button href="" class="wheel-button" ng-click="moveStep(38)">Up</button>&nbsp;&nbsp;
+      <button href="" class="wheel-button" ng-click="moveStep(40)">Down</button>&nbsp;&nbsp;
     </div>
   </div>
 </body>

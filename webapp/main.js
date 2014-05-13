@@ -18,13 +18,14 @@ App.controller('AppController', function($scope) {
     sideMargin = 20,
     rowCount = 4,
     columnCount = 4,
-    radius = 15,
+    radius = 10,
     cardImageWidthHeight = 50,
-    screenWidth = 400,
-    screenHeight = 600,
+    screenWidth = 350,
+    screenHeight = 550,
     cellWidth = (screenWidth - 3 * cellMargin - 2 * sideMargin) / 4,
     cellHeight = cellWidth,
-    backgroundFillColor = '#EDEDED',
+    cellbackgroundFillColor = '#FBF8E1',
+    canvasBackgroundColor = '#F7F2C8',
     score = 0,
     historySteps = [],
     movedFlag = false,
@@ -49,6 +50,11 @@ App.controller('AppController', function($scope) {
     $scope.score = 0;
     $scope.gameInit();
     gameLoopInterval = setInterval(redraw, 50);
+
+
+    document.addEventListener('touchstart', function (e) {mouseDownHandle(e)});
+    document.addEventListener('touchend', function (e) {mouseUpHandle(e)});
+
   }
 
   $scope.gameLoop = function () {
@@ -57,6 +63,8 @@ App.controller('AppController', function($scope) {
 
   $scope.gameInit = function () {
     redraw();
+    ctx.fillStyle = canvasBackgroundColor;
+    ctx.fillRadiusRect(0, 0, 350, 350, radius, true, true);
     $scope.addCard();
     $scope.addCard();
   }
@@ -100,7 +108,7 @@ App.controller('AppController', function($scope) {
     }
     coord = randomCoord();
     matrixArr[coord[0]][coord[1]] = card;
-
+    debug.info('New pos: ' + coord.toString());
     movedFlag = true;
   }
 
@@ -270,7 +278,7 @@ App.controller('AppController', function($scope) {
     var color = '';
 
     if (value == -1) {
-      color = backgroundFillColor;
+      color = cellbackgroundFillColor;
     } else if (n > 0 && n < 3) {
       color = colors[0];
     } else if (n >= 3 && n < 5) {
@@ -290,7 +298,7 @@ App.controller('AppController', function($scope) {
 
   setCellByIndex = function (i, j) {
       var x = sideMargin + j * cellWidth + j * cellMargin;      
-      var y = i * cellHeight + i * cellMargin;
+      var y = i * cellHeight + i * cellMargin + sideMargin;
       var card = matrixArr[i][j];
       
       ctx.fillStyle = getBackgroundColor(card);
@@ -453,6 +461,7 @@ App.controller('AppController', function($scope) {
       }
 
       this.beginPath();
+      this.strokeStyle = canvasBackgroundColor;
       this.moveTo(x + radius, y);
       this.lineTo(x + width - radius, y);
       this.quadraticCurveTo(x + width, y, x + width, y + radius);

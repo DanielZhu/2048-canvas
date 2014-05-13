@@ -3,7 +3,19 @@ body {
   font-size: 12px;
   background-color: $color-background;
   width: 400px;
+  overflow: hidden;
 }
+
+/*-----------------------------
+    RESET STYLES
+-----------------------------*/
+
+html, body, form, fieldset, p, div, h1, h2, h3, h4, h5, h6 {
+    margin:0;
+    padding:0;
+    -webkit-text-size-adjust:none;
+}
+
 .container:focus {outline: 0;}
 .header-bar {
   font-size: 12px;
@@ -61,28 +73,45 @@ body {
   }
 }
 .game-zone {
-  width: 400px;
-  height: 600px;
+  width: 350px;
+  height: 450px;
   .game-tool-zone {
-    width: 400px;
-    height: 200px;
+    width: 350px;
+    height: 100px;
     .score-background {
       float: left;
-      font-size: 30px;
       text-align: center;
       vertical-align: middle;
       margin: 20px 0px 0px 20px;
       width: 150px;
-      height: 100px;
+      height: 80px;
       background-color: #FDF5E6;
+      font-size: 20px;
       .score {
-        margin: 20px;        
+        font-size: 30px;
+        line-height: 50px;
+        margin: 20px;
       }
     }
   }
   .playing-area {
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 350px;
+    clear: both;
+    #gameGrid {
+      margin: 5px;
+    }
+  }
+}
+.wheel {
+  width: 370px;
+  height: 50px;
+  text-align: center;
+  margin: 20px 0px 0px 0px;
+  clear: both;
+  .wheel-button {
+    width: 60px;
+    height: 30px;
   }
 }
 .animate-hide {
