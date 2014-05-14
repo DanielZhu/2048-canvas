@@ -4,9 +4,12 @@
   <meta charset="utf-8">
   <title>Xiaodan's Everything</title>
   <meta name="author" content="Mengdan Zhu  (Daniel Zhu)">
-  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
   <link href="/favicon.png" rel="shortcut icon">
   <link href="stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
 
   <!-- Third party libraries -->
   <script src="./libs/jquery/jquery-2.0.3.js"></script>
@@ -16,11 +19,11 @@
 
   <script src="main.js"></script>
 </head>
-<body ng-controller="AppController">
-  <div class="container">
+<body ng-controller="AppController"  >
+  <div class="container" >
     <div class="header-bar">
       <div class="header-bar-base">
-        <div class="header-bar-logo">Game 2048 by Dan(enterzhu@gmail.com)<!-- <button href="" ng-click="addCard()">Add Card</button> --></div>
+        <div class="header-bar-logo">Game 2048 by Dan(enterzhu@gmail.com) <!-- <button href="" ng-click="addCard()">Add Card</button> --> </div>
       </div>
       <div class="header-bar-more animate-hide" ng-show="checked">
         <div>
@@ -32,7 +35,8 @@
         <div class="score-background">Score<br><span class="score">{{score}}</span></div>
         <div class="score-background">Steps<br><span class="score">{{totalSteps}}</span></div>
       </div>
-      <div class="playing-area" ng-keyup="moveStepPre()" tabindex="1" ng-mousedown="mouseDownHandle($event)" ng-mouseup="mouseUpHandle($event)">
+      <div class="playing-area" ng-keyup="moveStepPre()" tabindex="1" >
+        <canvas id="gameGridBackground" width="350" height="350" style="">Your browser does not support the HTML5 canvas tag.</canvas>
         <canvas id="gameGrid" width="350" height="350" style="">Your browser does not support the HTML5 canvas tag.</canvas>
       </div>
     </div>
