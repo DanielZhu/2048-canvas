@@ -22,8 +22,8 @@ App.controller('AppController', function($scope) {
     columnCount = 4,
     radius = 10,
     cardImageWidthHeight = 50,
-    screenWidth = 350,
-    screenHeight = 550,
+    screenWidth = 500,
+    screenHeight = 500,
     cellWidth = (screenWidth - 3 * cellMargin - 2 * sideMargin) / 4,
     cellHeight = cellWidth,
     cellbackgroundFillColor = '#FBF8E1',
@@ -37,10 +37,14 @@ App.controller('AppController', function($scope) {
     touchStartPos = [0, 0],
     moveDirect,
     animFrequency = 0.1,
-    averageAnimTime = 8,
+    averageAnimTime = 5,
     colors = ['#E28DB6', '#DDA0DD', '#965D79', '#E3324C', '#962133', '#B3AE7F', '#47A0CC', '#8A6B08', '#AD5F15'],
     directions = [DIRECTION_WEST, DIRECTION_NORTH, DIRECTION_EAST, DIRECTION_SOUTH];
 
+  /**
+   * [init Initialize the whole game container]
+   * @return {null}
+   */
   $scope.init = function () {
     canvasEle = document.getElementById('gameGrid');
     canvasBackgroundEle = document.getElementById('gameGridBackground');
@@ -58,25 +62,36 @@ App.controller('AppController', function($scope) {
     initMatrix();
     $scope.score = 0;
     $scope.gameInit();
-    // matrixArr[0][1] = 2;
-    // matrixArr[0][2] = 2;
-    // matrixArr[0][3] = 2;
-    // matrixArr[0][0] = 2;
-    // $scope.animShowCard(0, 0);
-    // $scope.animShowCard(0, 1);
-    // $scope.animShowCard(0, 2);
-    // $scope.animShowCard(0, 3);
-    // gameLoopInterval = setInterval(redraw, 50);
 
-    // canvasEle.addEventListener('touchstart', function (event) {
-    //   $scope.touchStartHandle(event)
-    // });
-    // canvasEle.addEventListener('touchend', function (event) {
-    //   $scope.touchEndHandle(event)
-    // });
-    // canvasEle.addEventListener('touchmove', function (event) {
-    //   event.preventDefault();
-    // });
+    window.addEventListener("keydown", function(e) {
+        // space and arrow keys
+        if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+            e.preventDefault();
+        }
+    }, false);
+
+    canvasEle.addEventListener('touchstart', function (event) {
+      $scope.touchStartHandle(event)
+    });
+    canvasEle.addEventListener('touchend', function (event) {
+      $scope.touchEndHandle(event)
+    });
+    canvasEle.addEventListener('touchmove', function (event) {
+      event.preventDefault();
+    });
+  }
+
+  /**
+   * [initMatrix Reset the matrixArr to default]
+   * @return {null}
+   */
+  initMatrix = function () {
+    for (var i = 0; i < rowCount; i++) {
+      matrixArr[i] = [];
+      for (var j = 0; j < columnCount; j++) {
+        matrixArr[i][j] = -1;
+      };
+    };
   }
 
   var delayed = (function () {
@@ -100,20 +115,23 @@ App.controller('AppController', function($scope) {
     };
   }());
 
-  $scope.gameLoop = function () {
-    redraw();
-  }
-
+  /**
+   * [gameInit Initialize the game scene -> background/empty cards/two real cards with number]
+   * @return {null}
+   */
   $scope.gameInit = function () {
     ctxBack.fillStyle = canvasBackgroundColor;
-    ctxBack.fillRadiusRect(0, 0, 350, 350, radius, true, true);
-    redraw();
+    ctxBack.fillRadiusRect(0, 0, screenWidth, screenHeight, radius, true, true);
+    initCardsCanvas();
     $scope.addCard();
     $scope.addCard();
   }
 
-  redraw = function () {
-    // Initialize all the cell
+  /**
+   * [initCardsCanvas Initialize all the card cell on the canvas]
+   * @return {null}
+   */
+  initCardsCanvas = function () {
     if (!initFlag) {
       for (var i = 0; i < rowCount; i++) {
         for (var j = 0; j < columnCount; j++) {
@@ -122,27 +140,14 @@ App.controller('AppController', function($scope) {
       }
       initFlag = true;
     }
-
-    // if (movedFlag) {
-    //   for (var i = 0; i < rowCount; i++) {
-    //     for (var j = 0; j < columnCount; j++) {
-    //       setCellByIndex(i, j);
-    //     }
-    //   }
-    //   $scope.totalSteps++;
-    //   movedFlag = false;
-    // }
   }
 
+  /**
+   * [addCard Add one random card to the game scene]
+   */
   $scope.addCard = function () {
     var card =  -1,
       coord = [];
-
-    if (checkGameOver()) {
-      // clearInterval(gameLoopInterval);
-      window.alert('Game Over');
-      return;
-    }
 
     if (Math.random() > 0.2) {
       card = 2;
@@ -156,10 +161,20 @@ App.controller('AppController', function($scope) {
     $scope.animShowCard(coord[0], coord[1]);
   }
 
+  drawCardNumber = function (card, x, y) {
+    if (typeof card !== 'undefined' && card != -1) {
+      var cardImage = new Image();
+      cardImage.src = 'images/card_' + zeroPad(Math.log(card) / Math.log(2) - 1, 4) + '_' + card + '.png';
+      cardImage.onload = function () {
+        ctx.drawImage(cardImage,x, y);
+      }
+    }
+  }
+
   $scope.animShowCard = function (i, j) {
     var progress = 0;
     var x = sideMargin + j * cellWidth + j * cellMargin;
-    var y = i * cellHeight + i * cellMargin + sideMargin;
+    var y = sideMargin +  i* cellHeight + i * cellMargin;
     var card = matrixArr[i][j];
 
     ctx.fillStyle = cellbackgroundFillColor;
@@ -168,13 +183,14 @@ App.controller('AppController', function($scope) {
     function drawCard () {
       if (progress >= 1) {
         clearInterval(id);
-        if (typeof card !== 'undefined' && card != -1) {
-          var cardImage = new Image();
-          cardImage.src = 'images/card_' + zeroPad(Math.log(card) / Math.log(2) - 1, 4) + '_' + card + '.png';
-          cardImage.onload = function () {
-            ctx.drawImage(cardImage, x + (cellWidth - cardImageWidthHeight) / 2, y + (cellWidth - cardImageWidthHeight) / 2);
-          }
-        }
+        drawCardNumber(card, x + (cellWidth - cardImageWidthHeight) / 2, y + (cellWidth - cardImageWidthHeight) / 2);
+        // if (typeof card !== 'undefined' && card != -1) {
+        //   var cardImage = new Image();
+        //   cardImage.src = 'images/card_' + zeroPad(Math.log(card) / Math.log(2) - 1, 4) + '_' + card + '.png';
+        //   cardImage.onload = function () {
+        //     ctx.drawImage(cardImage, x + (cellWidth - cardImageWidthHeight) / 2, y + (cellWidth - cardImageWidthHeight) / 2);
+        //   }
+        // }
       } else {
         ctx.fillStyle = getBackgroundColor(card);
         ctx.fillRadiusRect(x, y, cellWidth * progress, cellHeight * progress, radius * progress, true, true);
@@ -248,7 +264,7 @@ App.controller('AppController', function($scope) {
                   matrixArr[i][j] = matrixArr[i][j] * 2;
                   matrixArr[i][k + 1] = -1;
 
-                  $scope.animMoveCard([i, j], [i, k + 1]);
+                  $scope.animMoveCard([i, k + 1], [i, j]);
 
                   delayed(0, function (i, j) {
                     return function() {
@@ -280,7 +296,7 @@ App.controller('AppController', function($scope) {
                   matrixArr[j][i] = matrixArr[j][i] * 2;
                   matrixArr[k + 1][i] = -1;
 
-                  $scope.animMoveCard([j, i], [k + 1, i]);
+                  $scope.animMoveCard([k + 1, i], [j, i]);
                   // setTimeout($scope.animShowCard(j, i), 0);
 
                   delayed(0, function (j, i) {
@@ -315,7 +331,7 @@ App.controller('AppController', function($scope) {
                   matrixArr[i][j] = matrixArr[i][j] * 2;
                   matrixArr[i][k - 1] = -1;
 
-                  $scope.animMoveCard([i, j], [i, k - 1]);
+                  $scope.animMoveCard([i, k - 1], [i, j]);
                   // setTimeout($scope.animShowCard(i, j), 0);
 
                   delayed(0, function (i, j) {
@@ -350,7 +366,7 @@ App.controller('AppController', function($scope) {
                   matrixArr[j][i] = matrixArr[j][i] * 2;
                   matrixArr[k - 1][i] = -1;
 
-                  $scope.animMoveCard([j, i], [k - 1, i]);
+                  $scope.animMoveCard([k - 1, i], [j, i]);
                   // setTimeout($scope.animShowCard(j, i), 0);
 
                   delayed(0, function (j, i) {
@@ -421,15 +437,6 @@ App.controller('AppController', function($scope) {
     debug.info(touchStartPos);
   }
 
-  initMatrix = function () {
-    for (var i = 0; i < rowCount; i++) {
-      matrixArr[i] = [];
-      for (var j = 0; j < columnCount; j++) {
-        matrixArr[i][j] = -1;
-      };
-    };
-  }
-
   setCellByIndex = function (i, j) {
     var x = sideMargin + j * cellWidth + j * cellMargin;
     var y = i * cellHeight + i * cellMargin + sideMargin;
@@ -482,33 +489,42 @@ App.controller('AppController', function($scope) {
 
   resetCellByIndex = function (i, j) {
     var x = sideMargin + j * cellWidth + j * cellMargin;
-    var y = i * cellHeight + i * cellMargin + sideMargin;
+    var y = sideMargin + i * cellHeight + i * cellMargin;
     var card = matrixArr[i][j];
 
     ctxBack.fillStyle = getBackgroundColor(card);
     ctxBack.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
   }
 
-  $scope.animMoveCard = function (targetPos, startPos) {
+  drawMovingCellByIndex = function (i, j, x, y) {
+    var card = matrixArr[i][j];
+    ctx.fillStyle = getBackgroundColor(card);
+    ctx.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
+  }
+
+  $scope.animMoveCard = function (startPos, targetPos) {
     var progress = 0;
     var startX = sideMargin + startPos[1] * cellWidth + startPos[1] * cellMargin;
     var startY = sideMargin + startPos[0] * cellHeight + startPos[0] * cellMargin
     var targetX = sideMargin + targetPos[1] * cellWidth + targetPos[1] * cellMargin;
     var targetY = sideMargin + targetPos[0] * cellHeight + targetPos[0] * cellMargin;
 
-    var card = matrixArr[startPos[0]][startPos[1]];
-    var cardImageData=ctx.getImageData(startX, startY, cellWidth, cellHeight);
+    // var cardImageData=ctx.getImageData(startX, startY, cellWidth, cellHeight);
+    var card = matrixArr[targetPos[0]][targetPos[1]];
     var distXMoved =  targetX - startX;
     var distYMoved = targetY - startY;
 
     function moveCard () {
       if ((progress  + animFrequency) > 1) {
+        drawCardNumber(card, targetX + (cellWidth - cardImageWidthHeight) / 2, targetY + (cellWidth - cardImageWidthHeight) / 2);
         clearInterval(id);
       } else {
-        ctx.clearRect(startX + distXMoved * progress, startY + distYMoved * progress, cellWidth, cellHeight);
+        ctx.clearRect(startX - 2 + distXMoved * progress, startY -2 + distYMoved * progress, cellWidth + 4, cellHeight + 4);
         refillBackgroundEmptyCard();
         progress += animFrequency;
-        ctx.putImageData(cardImageData, startX + distXMoved * progress, startY + distYMoved * progress);
+
+        drawMovingCellByIndex(targetPos[0], targetPos[1], startX + distXMoved * progress, startY + distYMoved * progress);
+        // ctx.putImageData(cardImageData, startX + distXMoved * progress, startY + distYMoved * progress);
       }
     }
 
@@ -550,7 +566,7 @@ App.controller('AppController', function($scope) {
                 matrixArr[i][j] = -1;
                 emptyPosQueue.push([i, j]);
 
-                $scope.animMoveCard(firstEmptyPos, [i, j]);
+                $scope.animMoveCard([i, j], firstEmptyPos);
               }
             }
           }
@@ -575,7 +591,7 @@ App.controller('AppController', function($scope) {
                 matrixArr[j][i] = -1;
                 emptyPosQueue.push([j, i]);
 
-                $scope.animMoveCard(firstEmptyPos, [j, i]);
+                $scope.animMoveCard([j, i], firstEmptyPos);
               }
             }
           }
@@ -600,7 +616,7 @@ App.controller('AppController', function($scope) {
                 matrixArr[i][j] = -1;
                 emptyPosQueue.push([i, j]);
 
-                $scope.animMoveCard(firstEmptyPos, [i, j]);
+                $scope.animMoveCard([i, j], firstEmptyPos);
               }
             }
           }
@@ -625,7 +641,7 @@ App.controller('AppController', function($scope) {
                 matrixArr[j][i] = -1;
                 emptyPosQueue.push([j, i]);
 
-                $scope.animMoveCard(firstEmptyPos, [j, i]);
+                $scope.animMoveCard([j, i], firstEmptyPos);
               }
             }
           }
@@ -636,12 +652,18 @@ App.controller('AppController', function($scope) {
     }
 
     if (movedFlag || mergedFlag) {
-      $scope.totalSteps++;
-      $scope.$apply();
+      // $scope.$apply();
       $scope.addCard();
       movedFlag = false;
       mergedFlag = false;
+    } else {
+      if (checkGameOver()) {
+        window.alert('Game Over');
+        return;
+      }
     }
+
+    $scope.totalSteps++;
   }
 
   /**
@@ -660,7 +682,7 @@ App.controller('AppController', function($scope) {
    * @return {[Boolean]}
    */
   checkGameOver = function () {
-    return ((matrixArr.toString().indexOf(-1) == -1 && !movedFlag) ? true : false);
+    return ((matrixArr.toString().indexOf(-1) == -1) ? true : false);
   }
 
   /**

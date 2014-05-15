@@ -164,155 +164,135 @@ a {
   margin: .5em 1.5em 1em 0;
 }
 
-/* line 1, ../al-gra/sass/custom/_custom.scss */
+/* line 8, ../al-gra/sass/custom/_custom.scss */
+hr {
+  margin: 20px 0px;
+  color: #9d9d9d;
+}
+
+/* line 13, ../al-gra/sass/custom/_custom.scss */
 body {
-  font-family: 'Open Sans', 'Anonymous Pro', 'Source Code Pro';
+  font-family: 'Noto Sans', sans-serif;
   font-size: 12px;
-  background-color: white;
-  width: 400px;
-  overflow: hidden;
+  background-color: floralwhite;
+  text-align: center;
+  min-width: 500px;
+  width: auto !important;
+  width: 500px;
 }
 
 /*-----------------------------
     RESET STYLES
 -----------------------------*/
-/* line 13, ../al-gra/sass/custom/_custom.scss */
-html, body, form, fieldset, p, div, h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  padding: 0;
-  -webkit-text-size-adjust: none;
+/* line 27, ../al-gra/sass/custom/_custom.scss */
+.container {
+  width: 500px;
+  margin: 0 auto;
 }
-
-/* line 22, ../al-gra/sass/custom/_custom.scss */
+/* line 30, ../al-gra/sass/custom/_custom.scss */
 .container:focus {
   outline: 0;
 }
 
-/* line 23, ../al-gra/sass/custom/_custom.scss */
+/* line 34, ../al-gra/sass/custom/_custom.scss */
 .header-bar {
+  margin-top: 50px;
   font-size: 12px;
-  width: 400px;
-  min-height: 30px;
-  max-height: 30px;
+  width: 500px;
+  min-height: 40px;
   letter-spacing: 0px;
-  border-bottom: 1px solid #eee;
 }
-/* line 31, ../al-gra/sass/custom/_custom.scss */
+/* line 40, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base {
-  position: fixed;
   opacity: 1;
   z-index: 10;
-  height: 30px;
-  background-color: white;
 }
-/* line 38, ../al-gra/sass/custom/_custom.scss */
+/* line 44, ../al-gra/sass/custom/_custom.scss */
 .header-bar .header-bar-base .header-bar-logo {
-  font-size: 18px;
-  margin: 5px 5px;
+  font-size: 80px;
   float: left;
 }
-/* line 43, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-base .advanced-btn {
-  border: none;
-  padding: 5px 10px;
-  position: absolute;
-  background: #fff;
-  letter-spacing: 2px;
-}
-/* line 49, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-base .advanced-btn:hover {
-  padding: 5px 10px;
-  -webkit-box-shadow: 0 2px 4px #d6d6d6;
-  border: 1px solid #d6d6d6;
-  box-shadow: 0 2px 4px #d6d6d6;
-  color: #333;
-}
-/* line 56, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-base .advanced-btn:active {
-  background: #d6d6d6;
-}
-/* line 60, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-base .advanced-btn-active {
-  background-color: #d6d6d6;
-}
-/* line 64, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-more {
-  opacity: 1;
-  z-index: 10;
-  clear: both;
-  height: 30px;
-  position: absolute;
-  top: 35px;
-  font-size: 14px;
-}
-/* line 72, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-more .more-label {
-  padding: 2px 5px;
-  letter-spacing: 0px;
-}
-
-/* line 78, ../al-gra/sass/custom/_custom.scss */
-.game-zone {
-  width: 350px;
-  height: 450px;
-}
-/* line 81, ../al-gra/sass/custom/_custom.scss */
-.game-zone .game-tool-zone {
-  width: 350px;
-  height: 100px;
-}
-/* line 84, ../al-gra/sass/custom/_custom.scss */
-.game-zone .game-tool-zone .score-background {
-  float: left;
+/* line 50, ../al-gra/sass/custom/_custom.scss */
+.header-bar .result-bar .score-background {
+  float: right;
   text-align: center;
   vertical-align: middle;
-  margin: 20px 0px 0px 20px;
-  width: 150px;
-  height: 80px;
-  background-color: #FDF5E6;
+  margin: 0px 0px 0px 20px;
+  padding: 8px;
+  width: auto;
+  min-width: 50px;
+  height: 60px;
+  background-color: #CD2626;
   font-size: 20px;
+  border-radius: 10px;
+  color: white;
 }
-/* line 93, ../al-gra/sass/custom/_custom.scss */
-.game-zone .game-tool-zone .score-background .score {
+/* line 63, ../al-gra/sass/custom/_custom.scss */
+.header-bar .result-bar .score-background .score {
+  color: white;
   font-size: 30px;
   line-height: 50px;
   margin: 20px;
 }
-/* line 100, ../al-gra/sass/custom/_custom.scss */
+
+/* line 72, ../al-gra/sass/custom/_custom.scss */
+.game-zone {
+  width: 500px;
+  height: 500px;
+}
+/* line 75, ../al-gra/sass/custom/_custom.scss */
+.game-zone .game-tool-zone {
+  width: 500px;
+  height: 60px;
+}
+/* line 79, ../al-gra/sass/custom/_custom.scss */
 .game-zone .playing-area {
-  width: 350px;
-  height: 350px;
+  width: 500px;
+  height: 500px;
   clear: both;
   float: left;
 }
-/* line 105, ../al-gra/sass/custom/_custom.scss */
+/* line 84, ../al-gra/sass/custom/_custom.scss */
 .game-zone .playing-area #gameGrid {
-  position: absolute;
-  margin-top: 130px;
-  top: 0px;
+  z-index: 10;
 }
-/* line 110, ../al-gra/sass/custom/_custom.scss */
+/* line 87, ../al-gra/sass/custom/_custom.scss */
 .game-zone .playing-area #gameGridBackground {
-  top: 0px;
+  z-index: -1;
   position: absolute;
-  margin-top: 130px;
 }
 
-/* line 117, ../al-gra/sass/custom/_custom.scss */
+/* line 93, ../al-gra/sass/custom/_custom.scss */
+.game-notice {
+  line-height: 35px;
+  text-align: left;
+}
+/* line 96, ../al-gra/sass/custom/_custom.scss */
+.game-notice .game-notice-label {
+  font-size: 22px;
+  color: #575757;
+  margin: 0px 10px 0px 0px;
+}
+/* line 101, ../al-gra/sass/custom/_custom.scss */
+.game-notice .game-notice-text {
+  font-size: 18px;
+  color: #575757;
+}
+
+/* line 107, ../al-gra/sass/custom/_custom.scss */
 .wheel {
-  width: 370px;
+  width: 500px;
   height: 50px;
   text-align: center;
-  margin: 20px 0px 0px 0px;
   clear: both;
 }
-/* line 123, ../al-gra/sass/custom/_custom.scss */
+/* line 113, ../al-gra/sass/custom/_custom.scss */
 .wheel .wheel-button {
   width: 60px;
   height: 30px;
 }
 
-/* line 128, ../al-gra/sass/custom/_custom.scss */
+/* line 118, ../al-gra/sass/custom/_custom.scss */
 .animate-hide {
   -webkit-transition: all linear 0.5s;
   transition: all linear 0.5s;
@@ -320,20 +300,20 @@ html, body, form, fieldset, p, div, h1, h2, h3, h4, h5, h6 {
   background: white;
 }
 
-/* line 136, ../al-gra/sass/custom/_custom.scss */
+/* line 126, ../al-gra/sass/custom/_custom.scss */
 .animate-hide.ng-hide-add,
 .animate-hide.ng-hide-remove {
   display: block !important;
 }
 
-/* line 140, ../al-gra/sass/custom/_custom.scss */
+/* line 130, ../al-gra/sass/custom/_custom.scss */
 .animate-hide.ng-hide {
   line-height: 0;
   opacity: 0;
   padding: 0 10px;
 }
 
-/* line 146, ../al-gra/sass/custom/_custom.scss */
+/* line 136, ../al-gra/sass/custom/_custom.scss */
 .check-element {
   padding: 10px;
   border: 1px solid black;

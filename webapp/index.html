@@ -6,6 +6,7 @@
   <meta name="author" content="Mengdan Zhu  (Daniel Zhu)">
   <link href="/favicon.png" rel="shortcut icon">
   <link href="stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <link href='http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
@@ -19,25 +20,23 @@
 
   <script src="main.js"></script>
 </head>
-<body ng-controller="AppController"  >
-  <div class="container" >
+<body ng-controller="AppController" ng-keyup="moveStepPre()" tabindex="1" >
+  <div class="container">
     <div class="header-bar">
       <div class="header-bar-base">
-        <div class="header-bar-logo">Game 2048 by Dan(enterzhu@gmail.com) <!-- <button href="" ng-click="addCard()">Add Card</button> --> </div>
+        <div class="header-bar-logo">2048<!-- <button href="" ng-click="addCard()">Add Card</button> --> </div>
       </div>
-      <div class="header-bar-more animate-hide" ng-show="checked">
-        <div>
-        </div>
+      <div class="result-bar">
+        <div class="score-background">Score<br><span class="score">{{score}}</span></div>
+        <div class="score-background">Steps<br><span class="score">{{totalSteps}}</span></div>
       </div>
     </div>
     <div class="game-zone">
       <div class="game-tool-zone">
-        <div class="score-background">Score<br><span class="score">{{score}}</span></div>
-        <div class="score-background">Steps<br><span class="score">{{totalSteps}}</span></div>
       </div>
-      <div class="playing-area" ng-keyup="moveStepPre()" tabindex="1" >
-        <canvas id="gameGridBackground" width="350" height="350" style="">Your browser does not support the HTML5 canvas tag.</canvas>
-        <canvas id="gameGrid" width="350" height="350" style="">Your browser does not support the HTML5 canvas tag.</canvas>
+      <div class="playing-area">
+        <canvas id="gameGridBackground" width="500" height="500" style="">Your browser does not support the HTML5 canvas tag.</canvas>
+        <canvas id="gameGrid" width="500" height="500" style="">Your browser does not support the HTML5 canvas tag.</canvas>
       </div>
     </div>
     <div class="wheel">
@@ -45,6 +44,21 @@
       <button href="" class="wheel-button" ng-click="moveStep(39)">Right</button>&nbsp;&nbsp;
       <button href="" class="wheel-button" ng-click="moveStep(38)">Up</button>&nbsp;&nbsp;
       <button href="" class="wheel-button" ng-click="moveStep(40)">Down</button>&nbsp;&nbsp;
+    </div>
+    <div class="game-notice">
+      <div>
+        <span class="game-notice-label">How to play: </span>
+        <span class="game-notice-text">Use your arrow keys to move the cards. When two cards with the same number touch, they merge into one!</span>
+      </div>
+      <hr>
+      <div>
+        <span class="game-notice-label">Read Me: </span>
+        <span class="game-notice-text">The idea of this game came from the popular 2048 and 1024. Here's the original <a href="http://gabrielecirulli.github.io/2048/" target="_blank">2048 website</a>. I re-created it by HTML5 Canvas because of my great interests. Welcome to send your feedback to me. Thanks.</span>
+      </div>
+      <hr>
+      <div>
+        <span class="game-notice-text">Created by <a href="http://staydan.com" target="_blank">Zhu, Meng-Dan(Daniel)</a>. The source code can be found on <a href="https://github.com/DanielZhu/game-2048" target="_blank">Github</a></span>
+      </div>
     </div>
   </div>
 </body>
