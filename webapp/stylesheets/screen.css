@@ -174,125 +174,123 @@ hr {
 body {
   font-family: 'Noto Sans', sans-serif;
   font-size: 12px;
-  background-color: floralwhite;
+  background-color: #fff0e8 !important;
   text-align: center;
-  min-width: 500px;
   width: auto !important;
-  width: 500px;
 }
 
 /*-----------------------------
     RESET STYLES
 -----------------------------*/
-/* line 27, ../al-gra/sass/custom/_custom.scss */
-.container {
-  width: 500px;
-  margin: 0 auto;
-}
-/* line 30, ../al-gra/sass/custom/_custom.scss */
+/* line 28, ../al-gra/sass/custom/_custom.scss */
 .container:focus {
   outline: 0;
 }
 
-/* line 34, ../al-gra/sass/custom/_custom.scss */
+/* line 32, ../al-gra/sass/custom/_custom.scss */
 .header-bar {
-  margin-top: 50px;
   font-size: 12px;
-  width: 500px;
-  min-height: 40px;
+  height: 100px;
   letter-spacing: 0px;
 }
-/* line 40, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-base {
-  opacity: 1;
-  z-index: 10;
-}
-/* line 44, ../al-gra/sass/custom/_custom.scss */
-.header-bar .header-bar-base .header-bar-logo {
+/* line 37, ../al-gra/sass/custom/_custom.scss */
+.header-bar .header-bar-logo {
   font-size: 80px;
-  float: left;
 }
-/* line 50, ../al-gra/sass/custom/_custom.scss */
-.header-bar .result-bar .score-background {
-  float: right;
+/* line 40, ../al-gra/sass/custom/_custom.scss */
+.header-bar .item-background {
   text-align: center;
-  vertical-align: middle;
-  margin: 0px 0px 0px 20px;
-  padding: 8px;
+  margin: 10px 5px;
+  padding: 5px;
   width: auto;
-  min-width: 50px;
-  height: 60px;
+  min-width: 40px;
+  height: 80%;
   background-color: #CD2626;
   font-size: 20px;
   border-radius: 10px;
   color: white;
 }
-/* line 63, ../al-gra/sass/custom/_custom.scss */
-.header-bar .result-bar .score-background .score {
+/* line 51, ../al-gra/sass/custom/_custom.scss */
+.header-bar .item-background .item {
   color: white;
   font-size: 30px;
   line-height: 50px;
   margin: 20px;
 }
 
+/* line 59, ../al-gra/sass/custom/_custom.scss */
+.button {
+  padding: 15px 15px;
+  font-size: 20px;
+  color: white;
+  letter-spacing: 2px;
+  width: auto;
+  border-radius: 5px;
+}
+
+/* line 67, ../al-gra/sass/custom/_custom.scss */
+.game-tool {
+  width: 500px;
+  height: auto;
+  padding: 20px 0px;
+}
+
 /* line 72, ../al-gra/sass/custom/_custom.scss */
-.game-zone {
-  width: 500px;
-  height: 500px;
+.game-tool-button {
+  background-color: #8968cd;
+  margin: 0px 5px;
 }
-/* line 75, ../al-gra/sass/custom/_custom.scss */
-.game-zone .game-tool-zone {
-  width: 500px;
-  height: 60px;
-}
-/* line 79, ../al-gra/sass/custom/_custom.scss */
-.game-zone .playing-area {
+
+/* line 76, ../al-gra/sass/custom/_custom.scss */
+.playing-area {
+  margin: 10px;
   width: 500px;
   height: 500px;
   clear: both;
   float: left;
 }
-/* line 84, ../al-gra/sass/custom/_custom.scss */
-.game-zone .playing-area #gameGrid {
+/* line 82, ../al-gra/sass/custom/_custom.scss */
+.playing-area #gameGrid {
   z-index: 10;
 }
-/* line 87, ../al-gra/sass/custom/_custom.scss */
-.game-zone .playing-area #gameGridBackground {
+/* line 85, ../al-gra/sass/custom/_custom.scss */
+.playing-area #gameGridBackground {
   z-index: -1;
   position: absolute;
 }
 
-/* line 93, ../al-gra/sass/custom/_custom.scss */
+/* line 90, ../al-gra/sass/custom/_custom.scss */
 .game-notice {
   line-height: 35px;
   text-align: left;
 }
-/* line 96, ../al-gra/sass/custom/_custom.scss */
+/* line 93, ../al-gra/sass/custom/_custom.scss */
 .game-notice .game-notice-label {
   font-size: 22px;
   color: #575757;
   margin: 0px 10px 0px 0px;
 }
-/* line 101, ../al-gra/sass/custom/_custom.scss */
+/* line 98, ../al-gra/sass/custom/_custom.scss */
 .game-notice .game-notice-text {
   font-size: 18px;
   color: #575757;
 }
 
-/* line 107, ../al-gra/sass/custom/_custom.scss */
+/* line 104, ../al-gra/sass/custom/_custom.scss */
 .wheel {
   width: 500px;
-  height: 50px;
+  height: 80px;
   text-align: center;
   clear: both;
 }
-/* line 113, ../al-gra/sass/custom/_custom.scss */
+/* line 109, ../al-gra/sass/custom/_custom.scss */
 .wheel .wheel-button {
+  margin: 30px 0px;
   width: 60px;
   height: 30px;
 }
 
-/* line 118, ../al-gra/sass/custom/_custom.scss */
+/* line 115, ../al-gra/sass/custom/_custom.scss */
 .animate-hide {
   -webkit-transition: all linear 0.5s;
   transition: all linear 0.5s;
@@ -300,20 +298,20 @@ body {
   background: white;
 }
 
-/* line 126, ../al-gra/sass/custom/_custom.scss */
+/* line 123, ../al-gra/sass/custom/_custom.scss */
 .animate-hide.ng-hide-add,
 .animate-hide.ng-hide-remove {
   display: block !important;
 }
 
-/* line 130, ../al-gra/sass/custom/_custom.scss */
+/* line 127, ../al-gra/sass/custom/_custom.scss */
 .animate-hide.ng-hide {
   line-height: 0;
   opacity: 0;
   padding: 0 10px;
 }
 
-/* line 136, ../al-gra/sass/custom/_custom.scss */
+/* line 133, ../al-gra/sass/custom/_custom.scss */
 .check-element {
   padding: 10px;
   border: 1px solid black;

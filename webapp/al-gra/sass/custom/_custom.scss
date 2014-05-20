@@ -1,9 +1,9 @@
 
-$game-tool-zone-height: 60px;
+$game-tool-zone-height: 90px;
 $header-bar-min-height: 30px;
 $play-area-size: 500px;
-
-$game-board-width: 500px;
+$funciton-key-button: #8968CD;
+// $game-board-width: 500px;
 
 hr {
   margin: 20px 0px;
@@ -13,81 +13,78 @@ hr {
 body {
   font-family: 'Noto Sans', sans-serif;
   font-size: 12px;
-  background-color: $color-background;
+  background-color: $color-background !important;
   text-align: center;
-  // overflow: hidden;
-  min-width: $game-board-width;
+  // min-width: $game-board-width;
   width: auto !important;
-  width: $game-board-width;
+  // width: $game-board-width;
 }
 
 /*-----------------------------
     RESET STYLES
 -----------------------------*/
 .container {
-  width: $game-board-width;
-  margin: 0 auto;
+  // width: $game-board-width;
   &:focus {
     outline: 0;
   }
 }
 .header-bar {
-  margin-top: 50px;
   font-size: 12px;
-  width: $game-board-width;
-  min-height: 40px;
+  // width: $game-board-width;
+  height: 100px;
   letter-spacing: 0px;
-  .header-bar-base {
-    opacity: 1;
-    z-index: 10;
-
-    .header-bar-logo {
-      font-size: 80px;
-      float: left;
-    }
+  .header-bar-logo {
+    font-size: 80px;
   }
-  .result-bar {
-    .score-background {
-      float: right;
-      text-align: center;
-      vertical-align: middle;
-      margin: 0px 0px 0px 20px;
-      padding: 8px;
-      width: auto;
-      min-width: 50px;
-      height: 60px;
-      background-color: #CD2626;
-      font-size: 20px;
-      border-radius: 10px;
+  .item-background {
+    text-align: center;
+    margin: 10px 5px;
+    padding: 5px;
+    width: auto;
+    min-width: 40px;
+    height: 80%;
+    background-color: #CD2626;
+    font-size: 20px;
+    border-radius: 10px;
+    color: white;
+    .item {
       color: white;
-      .score {
-        color: white;
-        font-size: 30px;
-        line-height: 50px;
-        margin: 20px;
-      }
+      font-size: 30px;
+      line-height: 50px;
+      margin: 20px;
     }
   }
 }
-.game-zone {
+.button {
+  padding: 15px 15px;
+  font-size: 20px;
+  color: white;
+  letter-spacing: 2px;
+  width: auto;
+  border-radius: 5px;
+}
+.game-tool {
+  width: $play-area-size;
+  height: auto;
+  padding: 20px 0px;
+}
+.game-tool-button {
+  background-color: $funciton-key-button;
+  margin: 0px 5px;
+}
+.playing-area {
+  margin: 10px;
   width: $play-area-size;
   height: $play-area-size;
-  .game-tool-zone {
-    width: $play-area-size;
-    height: $game-tool-zone-height;
+  clear: both;
+  float: left;
+  #gameGrid {
+    z-index: 10;
   }
-  .playing-area {
-    width: $play-area-size;
-    height: $play-area-size;
-    clear: both;
-    float: left;
-    #gameGrid {
-      z-index: 10;
-    }
-    #gameGridBackground {
-      z-index: -1;
-      position: absolute;
-    }
+  #gameGridBackground {
+    z-index: -1;
+    position: absolute;
   }
 }
 .game-notice {
@@ -106,11 +103,11 @@ body {
 
 .wheel {
   width: $play-area-size;
-  height: 50px;
+  height: 80px;
   text-align: center;
-  // margin: 40px 0px 0px 0px;
   clear: both;
   .wheel-button {
+    margin: 30px 0px;
     width: 60px;
     height: 30px;
   }

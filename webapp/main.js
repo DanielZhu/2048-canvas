@@ -1,19 +1,30 @@
-var App = angular.module('game2048', []);
+var App = angular.module('game2048', ['LocalStorageModule']);
 var DIRECTION_NORTH = 'north',
   DIRECTION_EAST = 'east',
   DIRECTION_SOUTH = 'south',
   DIRECTION_WEST = 'west';
 
-App.controller('AppController', function($scope) {
+App.controller('AppController', ['$scope', 'localStorageService',function($scope, localStorageService) {
 
+  $scope.homeUrl = 'http://game2048.staydan.com';
   $scope.score = 0;
   $scope.totalSteps = 0;
+  $scope.bestScore = 0;
+  $scope.remainAvailableRegretSteps = 5;
+  $scope.stepHistory = [];
+  $scope.rankList = [];
+  $scope.word = /^\s*\w*\s*$/;
+  $scope.nickname = '';
+  $scope.emailAddress = '';
+  $scope.runMode = 'dev';
 
   var gameLoopInterval,
     canvasEle = null,
     canvasBackgroundEle = null,
     ctx,
     ctxBack,
+    scoreAddHistory = [],
+    maxAvailableRegretSteps = 5,
     matrixArr = [],
     cards = [],
     cellMargin = 10,
@@ -24,20 +35,20 @@ App.controller('AppController', function($scope) {
     cardImageWidthHeight = 50,
     screenWidth = 500,
     screenHeight = 500,
-    cellWidth = (screenWidth - 3 * cellMargin - 2 * sideMargin) / 4,
+    cellWidth = (screenWidth - (rowCount - 1) * cellMargin - 2 * sideMargin) / rowCount,
     cellHeight = cellWidth,
     cellbackgroundFillColor = '#FBF8E1',
     canvasBackgroundColor = '#F7F2C8',
-    score = 0,
-    historySteps = [],
     movedFlag = false,
     mergedFlag = false,
-    initFlag = false,
     mouseDownPos = [0, 0],
     touchStartPos = [0, 0],
     moveDirect,
-    animFrequency = 0.1,
-    averageAnimTime = 5,
+    maxProgress = 100,
+    animFrequency = 10,
+    averageAnimTime = 7,
+    baseUrl = '',
+    gameover = false,
     colors = ['#E28DB6', '#DDA0DD', '#965D79', '#E3324C', '#962133', '#B3AE7F', '#47A0CC', '#8A6B08', '#AD5F15'],
     directions = [DIRECTION_WEST, DIRECTION_NORTH, DIRECTION_EAST, DIRECTION_SOUTH];
 
@@ -50,20 +61,26 @@ App.controller('AppController', function($scope) {
     canvasBackgroundEle = document.getElementById('gameGridBackground');
 
     timer.init();
-    debug.setLevel(9);
+    debug.setLevel(0);
 
     if (canvasEle == null || canvasBackgroundEle == null)
       return false;
 
-    ctx = canvasEle.getContext("2d");
-    ctxBack = canvasBackgroundEle.getContext("2d");
+    ctx = canvasEle.getContext('2d');
+    ctxBack = canvasBackgroundEle.getContext('2d');
     extendCanvas();
 
-    initMatrix();
-    $scope.score = 0;
-    $scope.gameInit();
+    if (window.location.host.indexOf('localhost') === -1) {
+      $scope.runMode = 'pro';
+      baseUrl = 'http://game2048.staydan.com/gameWS/index.php';
+    } else {
+      $scope.runMode = 'dev';
+      baseUrl = 'http://localhost/gameWS';
+    }
 
-    window.addEventListener("keydown", function(e) {
+    initFromLocalstorage();
+
+    window.addEventListener('keydown', function(e) {
         // space and arrow keys
         if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
             e.preventDefault();
@@ -79,6 +96,111 @@ App.controller('AppController', function($scope) {
     canvasEle.addEventListener('touchmove', function (event) {
       event.preventDefault();
     });
+
+    $scope.$watch('nickname', updateNicknameAndMailAddreses);
+    $scope.$watch('emailAddress', updateNicknameAndMailAddreses);
+
+    $scope.getRanks()
+    var id = setInterval(
+      function () {
+        $scope.getRanks()
+      },
+      30000
+    )
+    preloadResources();
+  }
+
+  updateNicknameAndMailAddreses = function () {
+    localStorageService.set('nickname', $scope.nickname);
+    localStorageService.set('emailAddress', $scope.emailAddress);
+  }
+
+  initFromLocalstorage = function () {
+    var localMatrixArr = localStorageService.get('matrix');
+    if (localStorageService.get('remainAvailableRegretSteps')) {
+      $scope.remainAvailableRegretSteps = localStorageService.get('remainAvailableRegretSteps');
+    }
+
+    if (localStorageService.get('bestScore') != null) {
+      $scope.bestScore = localStorageService.get('bestScore');
+    } else {
+      $scope.bestScore = 0;
+    }
+
+    if (localStorageService.get('score') != null) {
+      $scope.score = parseInt(localStorageService.get('score'));
+    } else {
+      $scope.score = 0;
+    }
+
+    if (localStorageService.get('nickname') != null) {
+      $scope.nickname = localStorageService.get('nickname');
+    } else {
+      $scope.nickname = 'Guest';
+    }
+
+    if (localStorageService.get('emailAddress') != null) {
+      $scope.emailAddress = localStorageService.get('emailAddress');
+    } else {
+      $scope.emailAddress = 'guest@staydan.com';
+    }
+
+    if (localMatrixArr != null) {
+      matrixArr = localMatrixArr;
+      refactorGameGrid();
+      initCardsCanvas();
+    } else {
+      $scope.gameInit();
+    }
+  }
+
+  $scope.restartGame = function () {
+    var best = 0;
+    $scope.score = 0;
+    $scope.totalSteps = 0;
+    if (localStorageService.get('bestScore') != null) {
+      best = localStorageService.get('bestScore');
+    } else {
+      best = 0;
+    }
+
+    localStorageService.clearAll();
+    localStorageService.set('bestScore', best);
+    canvasEle.width = canvasEle.width;
+    $scope.gameInit();
+  }
+
+  $scope.submitScore = function () {
+    $.post(baseUrl + '/addMark', {nickname: $scope.nickname, email: $scope.emailAddress, marks: $scope.score}, function( data ) {
+      debug.info(data);
+    });
+  }
+
+  $scope.getRanks = function () {
+    $.get(baseUrl + '/top20List', function (rankData) {
+      debug.info(rankData);
+      $scope.rankList = rankData;
+      $scope.$apply();
+    });
+  }
+
+  $scope.regretStep = function () {
+    if ($scope.remainAvailableRegretSteps > 0 && $scope.stepHistory.length > 0) {
+      matrixArr = $scope.stepHistory.pop();
+      var minusScore = scoreAddHistory.pop();
+      debug.info('matrixArr: ' + JSON.stringify(matrixArr));
+      canvasEle.width = canvasEle.width;
+      initCardsCanvas();
+      $scope.score -= minusScore;
+      $scope.remainAvailableRegretSteps--;
+      localStorageService.set('remainAvailableRegretSteps', $scope.remainAvailableRegretSteps);
+    }
+  }
+
+  $scope.takeScreenshot = function () {
+    // var screenshot = new Image();
+    // screenshot.src = canvasEle.toDataUrl();
+    // window.location.href = screenshot;
   }
 
   /**
@@ -120,11 +242,21 @@ App.controller('AppController', function($scope) {
    * @return {null}
    */
   $scope.gameInit = function () {
-    ctxBack.fillStyle = canvasBackgroundColor;
-    ctxBack.fillRadiusRect(0, 0, screenWidth, screenHeight, radius, true, true);
+    initMatrix();
+    refactorGameGrid();
     initCardsCanvas();
     $scope.addCard();
     $scope.addCard();
+  }
+
+  refactorGameGrid = function () {
+    ctxBack.fillStyle = canvasBackgroundColor;
+    ctxBack.fillRadiusRect(0, 0, screenWidth, screenHeight, radius, true, true);
+    for (var i = 0; i < rowCount; i++) {
+      for (var j = 0; j < columnCount; j++) {
+        resetCellDefaultBackgroundByIndex(i, j);
+      }
+    }
   }
 
   /**
@@ -132,13 +264,12 @@ App.controller('AppController', function($scope) {
    * @return {null}
    */
   initCardsCanvas = function () {
-    if (!initFlag) {
-      for (var i = 0; i < rowCount; i++) {
-        for (var j = 0; j < columnCount; j++) {
-          setCellByIndex(i, j);
+    for (var i = 0; i < rowCount; i++) {
+      for (var j = 0; j < columnCount; j++) {
+        if (matrixArr[i][j] != -1){
+          animShowCard(i, j);
         }
       }
-      initFlag = true;
     }
   }
 
@@ -156,9 +287,12 @@ App.controller('AppController', function($scope) {
     }
     coord = randomCoord();
     matrixArr[coord[0]][coord[1]] = card;
-    debug.info('matrixArr: ' + matrixArr.toString());
+
+    localStorageService.set('matrix', JSON.stringify(matrixArr));
+
+    debug.info('matrixArr: ' + JSON.stringify(matrixArr));
     movedFlag = true;
-    $scope.animShowCard(coord[0], coord[1]);
+    animShowCard(coord[0], coord[1]);
   }
 
   drawCardNumber = function (card, x, y) {
@@ -171,36 +305,56 @@ App.controller('AppController', function($scope) {
     }
   }
 
-  $scope.animShowCard = function (i, j) {
+  animShowCard = function (i, j) {
     var progress = 0;
     var x = sideMargin + j * cellWidth + j * cellMargin;
     var y = sideMargin +  i* cellHeight + i * cellMargin;
     var card = matrixArr[i][j];
 
-    ctx.fillStyle = cellbackgroundFillColor;
-    ctx.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
-
     function drawCard () {
-      if (progress >= 1) {
+      // debug.info('drawCard progress: ' +　progress);
+      progress = (progress >= maxProgress ? maxProgress : progress);
+      ctx.fillStyle = getBackgroundColor(card);
+      ctx.fillRadiusRect(x, y, cellWidth * progress / maxProgress, cellHeight * progress / maxProgress, radius * progress / maxProgress, true, true);
+      if (progress >= maxProgress) {
         clearInterval(id);
         drawCardNumber(card, x + (cellWidth - cardImageWidthHeight) / 2, y + (cellWidth - cardImageWidthHeight) / 2);
-        // if (typeof card !== 'undefined' && card != -1) {
-        //   var cardImage = new Image();
-        //   cardImage.src = 'images/card_' + zeroPad(Math.log(card) / Math.log(2) - 1, 4) + '_' + card + '.png';
-        //   cardImage.onload = function () {
-        //     ctx.drawImage(cardImage, x + (cellWidth - cardImageWidthHeight) / 2, y + (cellWidth - cardImageWidthHeight) / 2);
-        //   }
-        // }
       } else {
-        ctx.fillStyle = getBackgroundColor(card);
-        ctx.fillRadiusRect(x, y, cellWidth * progress, cellHeight * progress, radius * progress, true, true);
-        progress += animFrequency;
+        progress = (progress + animFrequency > maxProgress ?  maxProgress : progress + animFrequency);
+      }
+    }
+
+    var id = setInterval(function () {drawCard()}, averageAnimTime)
+  }
+
+  animMoveCard = function (startPos, targetPos) {
+    var progress = 0;
+    var startX = sideMargin + startPos[1] * cellWidth + startPos[1] * cellMargin;
+    var startY = sideMargin + startPos[0] * cellHeight + startPos[0] * cellMargin
+    var targetX = sideMargin + targetPos[1] * cellWidth + targetPos[1] * cellMargin;
+    var targetY = sideMargin + targetPos[0] * cellHeight + targetPos[0] * cellMargin;
+
+    var card = matrixArr[targetPos[0]][targetPos[1]];
+    var distXMoved =  targetX - startX;
+    var distYMoved = targetY - startY;
+
+    function moveCard () {
+      // debug.info('moveCard progress: ' +　progress);
+      ctx.clearRect(startX + distXMoved * progress / maxProgress - 2, startY + distYMoved * progress / maxProgress - 2, cellWidth + 4, cellHeight + 4);
+
+      if (progress >= maxProgress) {
+        drawCardNumber(card, targetX + (cellWidth - cardImageWidthHeight) / 2, targetY + (cellWidth - cardImageWidthHeight) / 2);
+        drawMovingCellByIndex(targetPos[0], targetPos[1], startX + distXMoved, startY + distYMoved);
+        clearInterval(id);
+      } else {
+        progress = (progress + animFrequency > maxProgress ?  maxProgress : progress + animFrequency);
+        drawMovingCellByIndex(targetPos[0], targetPos[1], startX + distXMoved * progress / maxProgress, startY + distYMoved * progress / maxProgress);
       }
     }
 
     var id = setInterval(
       function () {
-        drawCard()
+        moveCard()
       },
       averageAnimTime
     )
@@ -217,11 +371,15 @@ App.controller('AppController', function($scope) {
       y = e.offsetY,
       key;
 
-    if (Math.abs(x - mouseDownPos[0]) > 100) {
+    if (gameover) {
+      return;
+    }
+
+    if (Math.abs(x - mouseDownPos[0]) > 60) {
       key = (x - mouseDownPos[0] > 0 ? 39 : 37);
     }
 
-    if (Math.abs(y - mouseDownPos[1]) > 100) {
+    if (Math.abs(y - mouseDownPos[1]) > 60) {
       key = (y - mouseDownPos[1] > 0 ? 40 : 38);
     }
 
@@ -233,6 +391,11 @@ App.controller('AppController', function($scope) {
   $scope.moveStepPre = function () {
     var e = window.event || e,
       key;
+
+    if (gameover) {
+      return;
+    }
+
     // IE8 and earlier
     if(window.event) {
       key = event.keyCode;
@@ -245,34 +408,56 @@ App.controller('AppController', function($scope) {
 
   $scope.mergeCard = function (value) {
     $scope.score += value;
+
+    if ($scope.score > $scope.bestScore) {
+      $scope.bestScore = $scope.score;
+      localStorageService.set('bestScore', $scope.score);
+    }
+    localStorageService.set('score', $scope.score);
+  }
+
+  savePreStep = function () {
+    var midMatrix = [];
+    for (var i = 0; i < rowCount; i++) {
+      midMatrix[i] = [];
+      for (var j = 0; j < columnCount; j++) {
+        midMatrix[i][j] = matrixArr[i][j];
+      }
+    }
+
+    if ($scope.stepHistory.length >= maxAvailableRegretSteps ) {
+      $scope.stepHistory.splice(0, 1);
+    }
+    $scope.stepHistory.push(midMatrix);
   }
 
   $scope.moveStep = function (key) {
-    historySteps.push(matrixArr.slice(0));
+    scoreAdd = 0;
+    savePreStep();
 
     moveDirect = directions[key - 37];
 
     switch (key) {
       case 37:
-        debug.info('left key hit');
         for (var i = 0; i < rowCount; i++) {
           for (var j = 0; j < columnCount; j++) {
             var k = j;
             if (matrixArr[i][j] != -1) {
-              while (k < 3) {
+              while (k < rowCount - 1) {
                 if (matrixArr[i][j] == matrixArr[i][k + 1]) {
                   matrixArr[i][j] = matrixArr[i][j] * 2;
                   matrixArr[i][k + 1] = -1;
 
-                  $scope.animMoveCard([i, k + 1], [i, j]);
+                  animMoveCard([i, k + 1], [i, j]);
 
                   delayed(0, function (i, j) {
                     return function() {
-                      $scope.animShowCard(i, j)
+                      animShowCard(i, j)
                     };
                   }(i, j));
 
-                  $scope.mergeCard(matrixArr[i][j]);
+                  scoreAdd += matrixArr[i][j];
+
                   j++;
                   mergedFlag = true;
                   break;
@@ -291,21 +476,22 @@ App.controller('AppController', function($scope) {
           for (var j = 0; j < rowCount; j++) {
             var k = j;
             if (matrixArr[j][i] != -1) {
-              while (k < 3) {
+              while (k < columnCount - 1) {
                 if (matrixArr[j][i] == matrixArr[k + 1][i]) {
                   matrixArr[j][i] = matrixArr[j][i] * 2;
                   matrixArr[k + 1][i] = -1;
 
-                  $scope.animMoveCard([k + 1, i], [j, i]);
-                  // setTimeout($scope.animShowCard(j, i), 0);
+                  animMoveCard([k + 1, i], [j, i]);
+                  // setTimeout(animShowCard(j, i), 0);
 
                   delayed(0, function (j, i) {
                     return function() {
-                      $scope.animShowCard(j, i)
+                      animShowCard(j, i)
                     };
                   }(j, i));
 
-                  $scope.mergeCard(matrixArr[j][i]);
+                  scoreAdd += matrixArr[j][i];
+
                   j++;
                   mergedFlag = true;
                   break;
@@ -318,7 +504,6 @@ App.controller('AppController', function($scope) {
             }
           }
         }
-        debug.info('up key hit');
         break
       case 39:
         for (var i = 0; i < rowCount; i++) {
@@ -331,16 +516,17 @@ App.controller('AppController', function($scope) {
                   matrixArr[i][j] = matrixArr[i][j] * 2;
                   matrixArr[i][k - 1] = -1;
 
-                  $scope.animMoveCard([i, k - 1], [i, j]);
-                  // setTimeout($scope.animShowCard(i, j), 0);
+                  animMoveCard([i, k - 1], [i, j]);
+                  // setTimeout(animShowCard(i, j), 0);
 
                   delayed(0, function (i, j) {
                     return function() {
-                      $scope.animShowCard(i, j);
+                      animShowCard(i, j);
                     };
                   }(i, j));
 
-                  $scope.mergeCard(matrixArr[i][j]);
+                  scoreAdd += matrixArr[i][j];
+
                   j--;
                   mergedFlag = true;
                   break;
@@ -353,7 +539,6 @@ App.controller('AppController', function($scope) {
             }
           }
         }
-        debug.info('right key hit');
         break
       case 40:
         for (var i = 0; i < columnCount; i++) {
@@ -366,16 +551,13 @@ App.controller('AppController', function($scope) {
                   matrixArr[j][i] = matrixArr[j][i] * 2;
                   matrixArr[k - 1][i] = -1;
 
-                  $scope.animMoveCard([k - 1, i], [j, i]);
-                  // setTimeout($scope.animShowCard(j, i), 0);
+                  animMoveCard([k - 1, i], [j, i]);
+                  // setTimeout(animShowCard(j, i), 0);
 
-                  delayed(0, function (j, i) {
-                    return function() {
-                      $scope.animShowCard(j, i);
-                    };
-                  }(j, i));
+                  animShowCard(j, i);
 
-                  $scope.mergeCard(matrixArr[j][i]);
+                  scoreAdd += matrixArr[j][i];
+
                   j--;
                   mergedFlag = true;
                   break;
@@ -388,40 +570,172 @@ App.controller('AppController', function($scope) {
             }
           }
         }
-        debug.info('down key hit');
         break
       default:
         break
     }
 
-    if (mergedFlag) {
-      delayed(1 / animFrequency * averageAnimTime + 40, function (moveDirect) {
-        return function() {
-          moveToEdge(moveDirect);
-        };
-      }(moveDirect));
+    $scope.mergeCard(scoreAdd);
+    scoreAddHistory.push(scoreAdd);
+
+    delayed(Math.round(maxProgress / animFrequency * averageAnimTime + 20), function (moveDirect) {
+      return function() {
+        moveToEdge(moveDirect);
+      }
+    }(moveDirect));
+  }
+
+  /**
+   * [moveToEdge description]
+   * @param  {[type]} direction
+   * @return {[type]}
+   */
+  moveToEdge = function (direction) {
+
+    if (directions.indexOf(direction) == -1) {
+      return;
+    }
+    switch (direction) {
+      case DIRECTION_WEST:
+        for (var i = 0; i < rowCount; i++) {
+          emptyPosQueue = [];
+          for (var j = 0; j < columnCount; j++) {
+            if (matrixArr[i][j] == -1) {
+              // Store all the empty pos
+              emptyPosQueue.push([i, j]);
+            } else {
+              // Not empty item
+              if (emptyPosQueue.length > 0) {
+                // pop the first empty pos for fill
+                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
+                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[i][j];
+                movedFlag = true;
+
+                // Reset this pos equals to -1
+                matrixArr[i][j] = -1;
+                emptyPosQueue.push([i, j]);
+
+                animMoveCard([i, j], firstEmptyPos);
+              }
+            }
+          }
+        }
+        break;
+      case DIRECTION_NORTH:
+        for (var i = 0; i < columnCount; i++) {
+          emptyPosQueue = [];
+          for (var j = 0; j < rowCount; j++) {
+            if (matrixArr[j][i] == -1) {
+              // Store all the empty pos
+              emptyPosQueue.push([j, i]);
+            } else {
+              if (emptyPosQueue.length > 0) {
+                // pop the first empty pos for fill
+                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
+                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[j][i];
+                movedFlag = true;
+
+                // Reset this pos equals to -1
+                matrixArr[j][i] = -1;
+                emptyPosQueue.push([j, i]);
+
+                animMoveCard([j, i], firstEmptyPos);
+              }
+            }
+          }
+        }
+        break;
+      case DIRECTION_EAST:
+        for (var i = 0; i < rowCount; i++) {
+          emptyPosQueue = [];
+          for (var j = columnCount - 1; j >= 0; j--) {
+            if (matrixArr[i][j] == -1) {
+              // Store all the empty pos
+              emptyPosQueue.push([i, j]);
+            } else {
+              if (emptyPosQueue.length > 0) {
+                // pop the first empty pos for fill
+                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
+                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[i][j];
+                movedFlag = true;
+
+                // Reset this pos equals to -1
+                matrixArr[i][j] = -1;
+                emptyPosQueue.push([i, j]);
+
+                animMoveCard([i, j], firstEmptyPos);
+              }
+            }
+          }
+        }
+        break;
+      case DIRECTION_SOUTH:
+        for (var i = 0; i < columnCount; i++) {
+          emptyPosQueue = [];
+          for (var j = rowCount - 1; j >= 0; j--) {
+            if (matrixArr[j][i] == -1) {
+              // Store all the empty pos
+              emptyPosQueue.push([j, i]);
+            } else {
+              if (emptyPosQueue.length > 0) {
+                // pop the first empty pos for fill
+                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
+                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[j][i];
+                movedFlag = true;
+
+                // Reset this pos equals to -1
+                matrixArr[j][i] = -1;
+                emptyPosQueue.push([j, i]);
+
+                animMoveCard([j, i], firstEmptyPos);
+              }
+            }
+          }
+        }
+        break;
+      default:
+        break
+    }
+
+    if (movedFlag || mergedFlag) {
+      $scope.totalSteps++;
+      $scope.addCard();
+      movedFlag = false;
+      mergedFlag = false;
     } else {
-      moveToEdge(moveDirect);
+      if (gameover = checkGameOver()) {
+        $scope.remainAvailableRegretSteps = 0;
+        $scope.stepHistory = [];
+        $scope.submitScore();
+        window.alert('Game Over');
+        return;
+      }
     }
   }
 
   $scope.touchStartHandle = function (e) {
-   // Ignore if touching with more than 1 finger
-   if (e.touches.length > 1 || e.targetTouches > 1) {
+    // Ignore if touching with more than 1 finger
+    if (e.touches.length > 1 || e.targetTouches > 1) {
       return;
     }
 
-    var touchStartClientX = e.touches[0].clientX;
-    var touchStartClientY = e.touches[0].clientY;
+    var touchStartClientX = e.changedTouches[0].clientX;
+    var touchStartClientY = e.changedTouches[0].clientY;
+
     touchStartPos = [touchStartClientX, touchStartClientY];
 
     debug.info(touchStartPos);
     e.preventDefault();
   }
+
   $scope.touchEndHandle = function (e) {
     var key;
-    var touchEndClientX = e.touches[0].clientX;
-    var touchEndClientY = e.touches[0].clientY;
+    var touchEndClientX = e.changedTouches[0].clientX;
+    var touchEndClientY = e.changedTouches[0].clientY;
+
+    if (gameover) {
+      return;
+    }
 
     if (Math.abs(touchEndClientX - touchStartPos[0]) > 100) {
       key = (touchEndClientX - touchStartPos[0] > 0 ? 39 : 37);
@@ -431,27 +745,9 @@ App.controller('AppController', function($scope) {
       key = (touchEndClientY - touchStartPos[1] > 0 ? 40 : 38);
     }
 
-   // alert(key + '<-key ' + touchEndClientX + ' : ' +touchEndClientY);
     $scope.moveStep(key);
 
     debug.info(touchStartPos);
-  }
-
-  setCellByIndex = function (i, j) {
-    var x = sideMargin + j * cellWidth + j * cellMargin;
-    var y = i * cellHeight + i * cellMargin + sideMargin;
-    var card = matrixArr[i][j];
-
-    ctx.fillStyle = getBackgroundColor(card);
-    ctx.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
-
-    // if (typeof card !== 'undefined' && card != -1) {
-    //   var cardImage = new Image();
-    //   cardImage.src = 'images/card_' + zeroPad(Math.log(card) / Math.log(2) - 1, 4) + '_' + card + '.png';
-    //   cardImage.onload = function () {
-    //     ctx.drawImage(cardImage, x + (cellWidth - cardImageWidthHeight) / 2, y + (cellWidth - cardImageWidthHeight) / 2);
-    //   }
-    // }
   }
 
   getBackgroundColor = function (value) {
@@ -492,7 +788,15 @@ App.controller('AppController', function($scope) {
     var y = sideMargin + i * cellHeight + i * cellMargin;
     var card = matrixArr[i][j];
 
-    ctxBack.fillStyle = getBackgroundColor(card);
+    ctx.fillStyle = getBackgroundColor(card);
+    ctx.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
+  }
+
+  resetCellDefaultBackgroundByIndex = function (i, j) {
+    var x = sideMargin + j * cellWidth + j * cellMargin;
+    var y = sideMargin + i * cellHeight + i * cellMargin;
+
+    ctxBack.fillStyle = cellbackgroundFillColor;
     ctxBack.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
   }
 
@@ -502,170 +806,6 @@ App.controller('AppController', function($scope) {
     ctx.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
   }
 
-  $scope.animMoveCard = function (startPos, targetPos) {
-    var progress = 0;
-    var startX = sideMargin + startPos[1] * cellWidth + startPos[1] * cellMargin;
-    var startY = sideMargin + startPos[0] * cellHeight + startPos[0] * cellMargin
-    var targetX = sideMargin + targetPos[1] * cellWidth + targetPos[1] * cellMargin;
-    var targetY = sideMargin + targetPos[0] * cellHeight + targetPos[0] * cellMargin;
-
-    // var cardImageData=ctx.getImageData(startX, startY, cellWidth, cellHeight);
-    var card = matrixArr[targetPos[0]][targetPos[1]];
-    var distXMoved =  targetX - startX;
-    var distYMoved = targetY - startY;
-
-    function moveCard () {
-      if ((progress  + animFrequency) > 1) {
-        drawCardNumber(card, targetX + (cellWidth - cardImageWidthHeight) / 2, targetY + (cellWidth - cardImageWidthHeight) / 2);
-        clearInterval(id);
-      } else {
-        ctx.clearRect(startX - 2 + distXMoved * progress, startY -2 + distYMoved * progress, cellWidth + 4, cellHeight + 4);
-        refillBackgroundEmptyCard();
-        progress += animFrequency;
-
-        drawMovingCellByIndex(targetPos[0], targetPos[1], startX + distXMoved * progress, startY + distYMoved * progress);
-        // ctx.putImageData(cardImageData, startX + distXMoved * progress, startY + distYMoved * progress);
-      }
-    }
-
-    var id = setInterval(
-      function () {
-        moveCard()
-      },
-      averageAnimTime
-    )
-  }
-
-  /**
-   * [moveToEdge description]
-   * @param  {[type]} direction
-   * @return {[type]}
-   */
-  moveToEdge = function (direction) {
-    if (directions.indexOf(direction) == -1) {
-      return;
-    }
-
-    switch (direction) {
-      case DIRECTION_WEST:
-        for (var i = 0; i < rowCount; i++) {
-          emptyPosQueue = [];
-          for (var j = 0; j < columnCount; j++) {
-            if (matrixArr[i][j] == -1) {
-              // Store all the empty pos
-              emptyPosQueue.push([i, j]);
-            } else {
-              // Not empty item
-              if (emptyPosQueue.length > 0) {
-                // pop the first empty pos for fill
-                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
-                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[i][j];
-                movedFlag = true;
-
-                // Reset this pos equals to -1
-                matrixArr[i][j] = -1;
-                emptyPosQueue.push([i, j]);
-
-                $scope.animMoveCard([i, j], firstEmptyPos);
-              }
-            }
-          }
-        }
-        break;
-      case DIRECTION_NORTH:
-        for (var i = 0; i < columnCount; i++) {
-          emptyPosQueue = [];
-          for (var j = 0; j < rowCount; j++) {
-            if (matrixArr[j][i] == -1) {
-              // Store all the empty pos
-              emptyPosQueue.push([j, i]);
-            } else {
-              // Not empty item
-              if (emptyPosQueue.length > 0) {
-                // pop the first empty pos for fill
-                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
-                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[j][i];
-                movedFlag = true;
-
-                // Reset this pos equals to -1
-                matrixArr[j][i] = -1;
-                emptyPosQueue.push([j, i]);
-
-                $scope.animMoveCard([j, i], firstEmptyPos);
-              }
-            }
-          }
-        }
-        break;
-      case DIRECTION_EAST:
-        for (var i = 0; i < rowCount; i++) {
-          emptyPosQueue = [];
-          for (var j = columnCount - 1; j >= 0; j--) {
-            if (matrixArr[i][j] == -1) {
-              // Store all the empty pos
-              emptyPosQueue.push([i, j]);
-            } else {
-              // Not empty item
-              if (emptyPosQueue.length > 0) {
-                // pop the first empty pos for fill
-                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
-                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[i][j];
-                movedFlag = true;
-
-                // Reset this pos equals to -1
-                matrixArr[i][j] = -1;
-                emptyPosQueue.push([i, j]);
-
-                $scope.animMoveCard([i, j], firstEmptyPos);
-              }
-            }
-          }
-        }
-        break;
-      case DIRECTION_SOUTH:
-        for (var i = 0; i < columnCount; i++) {
-          emptyPosQueue = [];
-          for (var j = rowCount - 1; j >= 0; j--) {
-            if (matrixArr[j][i] == -1) {
-              // Store all the empty pos
-              emptyPosQueue.push([j, i]);
-            } else {
-              // Not empty item
-              if (emptyPosQueue.length > 0) {
-                // pop the first empty pos for fill
-                var firstEmptyPos = emptyPosQueue.splice(0, 1)[0];
-                matrixArr[firstEmptyPos[0]][firstEmptyPos[1]] = matrixArr[j][i];
-                movedFlag = true;
-
-                // Reset this pos equals to -1
-                matrixArr[j][i] = -1;
-                emptyPosQueue.push([j, i]);
-
-                $scope.animMoveCard([j, i], firstEmptyPos);
-              }
-            }
-          }
-        }
-        break;
-      default:
-        break
-    }
-
-    if (movedFlag || mergedFlag) {
-      // $scope.$apply();
-      $scope.addCard();
-      movedFlag = false;
-      mergedFlag = false;
-    } else {
-      if (checkGameOver()) {
-        window.alert('Game Over');
-        return;
-      }
-    }
-
-    $scope.totalSteps++;
-  }
-
   /**
    * [zeroPad description]
    * @param  {[Integer]} num The number waiting for convert
@@ -673,8 +813,8 @@ App.controller('AppController', function($scope) {
    * @return {[Integer]}
    */
   zeroPad = function (num, n) {
-    if ((num + "").length >= n) return num;
-      return zeroPad("0" + num, n);
+    if ((num + '').length >= n) return num;
+      return zeroPad('0' + num, n);
   }
 
   /**
@@ -682,7 +822,82 @@ App.controller('AppController', function($scope) {
    * @return {[Boolean]}
    */
   checkGameOver = function () {
-    return ((matrixArr.toString().indexOf(-1) == -1) ? true : false);
+    var overFlag = true;
+
+    if (matrixArr.toString().indexOf(-1) == -1) {
+      for (var i = 0; i < rowCount; i++) {
+        for (var j = 0; j < columnCount; j++) {
+          var k = j;
+          if (matrixArr[i][j] != -1) {
+            while (k < rowCount - 1) {
+              if (matrixArr[i][j] == matrixArr[i][k + 1]) {
+                overFlag = false;
+                break;
+              } else if (matrixArr[i][k + 1] != -1) {
+                // Expect one different figure between two same figures
+                break;
+              }
+              k++;
+            }
+          }
+        }
+      }
+      for (var i = 0; i < columnCount; i++) {
+        for (var j = 0; j < rowCount; j++) {
+          var k = j;
+          if (matrixArr[j][i] != -1) {
+            while (k < columnCount - 1) {
+              if (matrixArr[j][i] == matrixArr[k + 1][i]) {
+                overFlag = false;
+                break;
+              } else if (matrixArr[k + 1][i] != -1) {
+                // Expect one different figure between two same figures
+                break;
+              }
+              k++;
+            }
+          }
+        }
+      }
+      for (var i = 0; i < rowCount; i++) {
+        for (var j = columnCount - 1; j >= 0; j--) {
+          var k = j;
+          if (matrixArr[i][j] != -1) {
+            while (k > 0) {
+              if (matrixArr[i][j] == matrixArr[i][k - 1]) {
+                overFlag = false;
+                break;
+              } else if (matrixArr[i][k - 1] != -1) {
+                // Expect one different figure between two same figures
+                break;
+              }
+              k--;
+            }
+          }
+        }
+      }
+      for (var i = 0; i < columnCount; i++) {
+        for (var j = rowCount - 1; j > 0; j--) {
+          var k = j;
+          if (matrixArr[j][i] != -1) {
+            while (k > 0) {
+              if (matrixArr[j][i] == matrixArr[k - 1][i]) {
+                overFlag = false;
+                break;
+              } else if (matrixArr[k - 1][i] != -1) {
+                // Expect one different figure between two same figures
+                break;
+              }
+              k--;
+            }
+          }
+        }
+      }
+    } else {
+      overFlag = false;
+    }
+
+    return overFlag;
   }
 
   /**
@@ -711,11 +926,19 @@ App.controller('AppController', function($scope) {
 
     while (true) {
       random = Math.floor(Math.random() * 10);
-      if (random < 4) {
+      if (random < rowCount) {
         break;
       }
     }
     return random;
+  }
+
+  preloadResources = function () {
+    // preload image
+    for (var i = 0; i < 12; i++) {
+      new Image().src = 'images/card_' + zeroPad(i, 4) + '_' + Math.pow(2, i + 1) + '.png';
+    }
+
   }
 
   extendCanvas = function () {
@@ -751,4 +974,4 @@ App.controller('AppController', function($scope) {
     }
   }
   $scope.init();
-});
+}]);

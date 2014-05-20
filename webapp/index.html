@@ -7,6 +7,7 @@
   <link href="/favicon.png" rel="shortcut icon">
   <link href="stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
   <link href='http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href="libs/bootstrap-3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
@@ -14,51 +15,103 @@
 
   <!-- Third party libraries -->
   <script src="./libs/jquery/jquery-2.0.3.js"></script>
+  <script src="./libs/bootstrap-3.1.1/js/bootstrap.min.js"></script>
   <script src="./libs/ba-debug.js"></script>
   <script src="./libs/angular.min.js"></script>
+  <script src="./libs/angular-local-storage.min.js"></script>
   <script src="./libs/timer.js"></script>
 
   <script src="main.js"></script>
 </head>
 <body ng-controller="AppController" ng-keyup="moveStepPre()" tabindex="1" >
   <div class="container">
-    <div class="header-bar">
-      <div class="header-bar-base">
-        <div class="header-bar-logo">2048<!-- <button href="" ng-click="addCard()">Add Card</button> --> </div>
+    <div class="row">
+      <div class="col-xs-offset-3 col-xs-6">
+        <div class="header-bar">
+          <div class="header-bar-logo pull-left"><a  ng-href="{{homeUrl}}">2048</a><!-- <button href="" ng-click="addCard()">Add Card</button> --> </div>
+          <div class="item-background pull-right">Best<br><span class="item">{{bestScore}}</span></div>
+          <div class="item-background pull-right" ng-click="submitScore()">Score<br><span class="item">{{score}}</span></div>
+          <!-- <div class="item-background">Steps<br><span class="item">{{totalSteps}}</span></div> -->
+        </div>
       </div>
-      <div class="result-bar">
-        <div class="score-background">Score<br><span class="score">{{score}}</span></div>
-        <div class="score-background">Steps<br><span class="score">{{totalSteps}}</span></div>
-      </div>
+      <div class="col-xs-3"></div>
     </div>
-    <div class="game-zone">
-      <div class="game-tool-zone">
+    <div class="row">
+      <div class="col-xs-offset-3 col-xs-6">
+        <div class="game-tool">
+          <a href="" ng-click="restartGame()" class="button game-tool-button">New Game</a>
+          <a href="" ng-click="regretStep()" class="button game-tool-button">Regret({{remainAvailableRegretSteps}})</a>
+          <a href="#leaderboard" class="button game-tool-button">LeaderBoard</a>
+        </div>
+        <div class="playing-area">
+          <canvas id="gameGridBackground" width="500" height="500" style="">Your browser does not support the HTML5 canvas tag.</canvas>
+          <canvas id="gameGrid" width="500" height="500" style="">Your browser does not support the HTML5 canvas tag.</canvas>
+        </div>
       </div>
-      <div class="playing-area">
-        <canvas id="gameGridBackground" width="500" height="500" style="">Your browser does not support the HTML5 canvas tag.</canvas>
-        <canvas id="gameGrid" width="500" height="500" style="">Your browser does not support the HTML5 canvas tag.</canvas>
-      </div>
+      <div class="col-xs-3"></div>
     </div>
-    <div class="wheel">
+    <!-- <div class="wheel">
       <button href="" class="wheel-button" ng-click="moveStep(37)">Left</button>&nbsp;&nbsp;
       <button href="" class="wheel-button" ng-click="moveStep(39)">Right</button>&nbsp;&nbsp;
       <button href="" class="wheel-button" ng-click="moveStep(38)">Up</button>&nbsp;&nbsp;
       <button href="" class="wheel-button" ng-click="moveStep(40)">Down</button>&nbsp;&nbsp;
+    </div> -->
+    <div class="row">
+      <div class="col-xs-offset-3 col-xs-6">
+        <div class="panel-body">
+          <span style="margin: 0px 10px;">Nickname: </span><input type="text" name="input" ngMaxlength="12" ng-model="nickname" ng-pattern="word" required>
+          <span style="margin: 0px 10px;">Email: </span><input type="email" name="input" ng-model="emailAddress" required ng-trim="true">
+        </div>
+        <div class="game-notice">
+          <div>
+            <span class="game-notice-label">How to play: </span>
+            <span class="game-notice-text">Use your arrow keys to move the cards. When two cards with the same number touch, they merge into one!</span>
+          </div>
+          <hr>
+          <div>
+            <span class="game-notice-label">Read Me: </span>
+            <span class="game-notice-text">The idea of this game came from the popular 2048 and 1024. Here's the original <a href="http://gabrielecirulli.github.io/2048/" target="_blank">2048 website</a>. I re-created it by HTML5 Canvas because of my great interests. Welcome to send your feedback to me. Thanks.</span>
+          </div>
+          <hr>
+          <div>
+            <span class="game-notice-text">Created by <a href="http://staydan.com" target="_blank">Zhu, Meng-Dan(Daniel)</a>. The source code can be found on <a href="https://github.com/DanielZhu/game-2048" target="_blank">Github</a></span>
+          </div>
+          <hr>
+
+        </div>
+      </div>
+      <div class="col-xs-3"></div>
     </div>
-    <div class="game-notice">
-      <div>
-        <span class="game-notice-label">How to play: </span>
-        <span class="game-notice-text">Use your arrow keys to move the cards. When two cards with the same number touch, they merge into one!</span>
+    <div class="row" id="leaderboard">
+      <div class="col-xs-offset-3 col-xs-6">
+        <div class="panel panel-success">
+          <!-- Default panel contents -->
+          <div class="panel-heading">Leaderboard</div>
+
+          <table class="table">
+            <tr>
+              <th>No.</th>
+              <th>Nickname</th>
+              <th>Email</th>
+              <th>Marks</th>
+              <th>Date</th>
+            </tr>
+            <tr ng-repeat="rank in rankList">
+              <td>{{$index + 1}}</td>
+              <td>{{rank.nickname}}</td>
+              <td>{{rank.email}}</td>
+              <td>{{rank.marks}}</td>
+              <td></td>
+            </tr>
+          </table>
+        </div>  
+        <div style="text-align: center;">
+          <span class="game-notice-text">
+            <a href="mailto: enterzhu@gmail.com" class="button"><img src="images/mail.png" /></a>
+           </span>
+        </div>
       </div>
-      <hr>
-      <div>
-        <span class="game-notice-label">Read Me: </span>
-        <span class="game-notice-text">The idea of this game came from the popular 2048 and 1024. Here's the original <a href="http://gabrielecirulli.github.io/2048/" target="_blank">2048 website</a>. I re-created it by HTML5 Canvas because of my great interests. Welcome to send your feedback to me. Thanks.</span>
-      </div>
-      <hr>
-      <div>
-        <span class="game-notice-text">Created by <a href="http://staydan.com" target="_blank">Zhu, Meng-Dan(Daniel)</a>. The source code can be found on <a href="https://github.com/DanielZhu/game-2048" target="_blank">Github</a></span>
-      </div>
+      <div class="col-xs-3"></div>
     </div>
   </div>
 </body>
