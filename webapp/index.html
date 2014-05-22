@@ -58,10 +58,20 @@
     </div> -->
     <div class="row">
       <div class="col-xs-offset-3 col-xs-6">
-        <div class="panel-body">
-          <span style="margin: 0px 10px;">Nickname: </span><input type="text" name="input" ngMaxlength="12" ng-model="nickname" ng-pattern="word" required>
-          <span style="margin: 0px 10px;">Email: </span><input type="email" name="input" ng-model="emailAddress" required ng-trim="true">
-        </div>
+        <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="nicknameInput" class="col-xs-2 control-label">Nickname: </label>
+            <div class="col-xs-10">
+              <input type="text" id="nicknameInput" class="form-control" placeholder="Nickname" ngMaxlength="12" ng-model="nickname" ng-pattern="word">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="emailInput" class="col-xs-2 control-label">Email: </label>
+            <div class="col-xs-10">
+              <input type="email" id="emailInput" class="form-control" placeholder="Enter email" ng-model="emailAddress" required ng-trim="true">
+            </div>
+          </div>
+        </form>
         <div class="game-notice">
           <div>
             <span class="game-notice-label">How to play: </span>
