@@ -87,19 +87,15 @@ App.controller('AppController', ['$scope', 'localStorageService',function($scope
         }
     }, false);
 
-    canvasEle.addEventListener('touchstart', function (event) {
-      $scope.touchStartHandle(event)
-    });
-    canvasEle.addEventListener('touchend', function (event) {
-      $scope.touchEndHandle(event)
-    });
-    canvasEle.addEventListener('touchmove', function (event) {
-      event.preventDefault();
-    });
+    canvasEle.addEventListener('touchstart', function (event) {$scope.touchStartHandle(event)});
+    canvasEle.addEventListener('touchend', function (event) {$scope.touchEndHandle(event)});
+    canvasEle.addEventListener('touchmove', function (event) {event.preventDefault();});
 
+    // Watch these variables to update the storage
     $scope.$watch('nickname', updateNicknameAndMailAddreses);
     $scope.$watch('emailAddress', updateNicknameAndMailAddreses);
 
+    // Refresh the leaderboard every 30 seconds
     $scope.getRanks()
     var id = setInterval(
       function () {
@@ -110,11 +106,19 @@ App.controller('AppController', ['$scope', 'localStorageService',function($scope
     preloadResources();
   }
 
+  /**
+   * [updateNicknameAndMailAddreses Update the localstorage]
+   * @return {[type]} [description]
+   */
   updateNicknameAndMailAddreses = function () {
     localStorageService.set('nickname', $scope.nickname);
     localStorageService.set('emailAddress', $scope.emailAddress);
   }
 
+  /**
+   * [initFromLocalstorage Init the view from localstorage]
+   * @return {[type]} [description]
+   */
   initFromLocalstorage = function () {
     var localMatrixArr = localStorageService.get('matrix');
     if (localStorageService.get('remainAvailableRegretSteps')) {
@@ -154,28 +158,42 @@ App.controller('AppController', ['$scope', 'localStorageService',function($scope
     }
   }
 
+  /**
+   * [restartGame Create a new game]
+   * @return {[type]} [description]
+   */
   $scope.restartGame = function () {
     var best = 0;
     $scope.score = 0;
     $scope.totalSteps = 0;
+    $scope.remainAvailableRegretSteps = 5;
     if (localStorageService.get('bestScore') != null) {
       best = localStorageService.get('bestScore');
     } else {
       best = 0;
     }
 
-    localStorageService.clearAll();
-    localStorageService.set('bestScore', best);
+    // localStorageService.clearAll();
+    localStorageService.set('score', 0);
     canvasEle.width = canvasEle.width;
+    gameover = false;
     $scope.gameInit();
   }
 
+  /**
+   * [submitScore Submit the fresh score to server]
+   * @return {[type]} [description]
+   */
   $scope.submitScore = function () {
     $.post(baseUrl + '/addMark', {nickname: $scope.nickname, email: $scope.emailAddress, marks: $scope.score}, function( data ) {
       debug.info(data);
     });
   }
 
+  /**
+   * [getRanks Retrieve the leaderboard]
+   * @return {[type]} [description]
+   */
   $scope.getRanks = function () {
     $.get(baseUrl + '/top20List', function (rankData) {
       debug.info(rankData);
@@ -184,6 +202,10 @@ App.controller('AppController', ['$scope', 'localStorageService',function($scope
     });
   }
 
+  /**
+   * [regretStep Allow user to regret the previous steps]
+   * @return {[type]} [description]
+   */
   $scope.regretStep = function () {
     if ($scope.remainAvailableRegretSteps > 0 && $scope.stepHistory.length > 0) {
       matrixArr = $scope.stepHistory.pop();
@@ -800,6 +822,14 @@ App.controller('AppController', ['$scope', 'localStorageService',function($scope
     ctxBack.fillRadiusRect(x, y, cellWidth, cellHeight, radius, true, true);
   }
 
+  /**
+   * [drawMovingCellByIndex Draw a moving card]
+   * @param  {[type]} i [first index of matrix]
+   * @param  {[type]} j [second index of matrix]
+   * @param  {[type]} x []
+   * @param  {[type]} y []
+   * @return {[type]}   []
+   */
   drawMovingCellByIndex = function (i, j, x, y) {
     var card = matrixArr[i][j];
     ctx.fillStyle = getBackgroundColor(card);
